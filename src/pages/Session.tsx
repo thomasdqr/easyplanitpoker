@@ -55,32 +55,50 @@ export default function SessionPage() {
   }, [participantId, sessionId, loading, navigate]);
 
   const handleAddStory = async (story: Omit<UserStory, 'id'>) => {
-    if (!sessionId || !currentParticipant?.isPM) return;
+    if (!sessionId || !currentParticipant?.isPM || !session) return;
 
     try {
       const newStory: UserStory = {
         ...story,
         id: crypto.randomUUID(),
         votes: {},
+        status: 'pending'
       };
 
-      const updatedStories = [...session!.stories, newStory];
-      await updateDoc(doc(db, 'sessions', sessionId), {
-        stories: updatedStories,
-        currentStoryId: session!.currentStoryId || newStory.id,
-      });
+      const updates: Partial<Session> = {
+        stories: [...session.stories, newStory]
+      };
+
+      // If no current story is selected, set this as current
+      if (!session.currentStoryId) {
+        updates.currentStoryId = newStory.id;
+      }
+
+      // Single update for both changes if needed
+      await updateDoc(doc(db, 'sessions', sessionId), updates);
     } catch (error) {
       console.error('Error adding story:', error);
     }
   };
 
   const handleSelectStory = async (storyId: string) => {
-    if (!sessionId || !currentParticipant?.isPM) return;
+    if (!sessionId || !currentParticipant?.isPM || !session) return;
 
     try {
+      // Only update if selecting a different story
+      if (storyId === session.currentStoryId) return;
+
+      // Reset votes when selecting a new story
+      const resetParticipants = session.participants.map(p => ({
+        ...p,
+        currentVote: null
+      }));
+
+      // Batch update story selection and reset votes
       await updateDoc(doc(db, 'sessions', sessionId), {
         currentStoryId: storyId,
         isVotingRevealed: false,
+        participants: resetParticipants
       });
     } catch (error) {
       console.error('Error selecting story:', error);
@@ -88,11 +106,16 @@ export default function SessionPage() {
   };
 
   const handleVote = async (value: number | string) => {
-    if (!sessionId || !session!.currentStoryId || !participantId) return;
+    if (!sessionId || !session?.currentStoryId || !participantId || session.isVotingRevealed) return;
 
     try {
       const numericValue = typeof value === 'string' ? -1 : value;
-      const updatedParticipants = session!.participants.map(p => 
+      
+      // Only update if the vote has changed
+      const currentVote = session.participants.find(p => p.id === participantId)?.currentVote;
+      if (currentVote === numericValue) return;
+
+      const updatedParticipants = session.participants.map(p => 
         p.id === participantId ? { ...p, currentVote: numericValue } : p
       );
 
@@ -105,14 +128,14 @@ export default function SessionPage() {
   };
 
   const handleRevealVotes = async () => {
-    if (!sessionId || !currentParticipant?.isPM) return;
+    if (!sessionId || !currentParticipant?.isPM || !session?.currentStoryId) return;
 
     try {
-      const currentStory = session!.stories.find(s => s.id === session!.currentStoryId);
+      const currentStory = session.stories.find(s => s.id === session.currentStoryId);
       if (!currentStory) return;
 
       // Calculate average points
-      const votes = session!.participants
+      const votes = session.participants
         .map(p => p.currentVote)
         .filter((vote): vote is number => vote !== null && vote >= 0);
       
@@ -120,14 +143,14 @@ export default function SessionPage() {
         ? Math.round(votes.reduce((a, b) => a + b, 0) / votes.length) 
         : 0;
 
-      // Update story with votes and average
-      const updatedStories = session!.stories.map(s => 
+      // Batch update story and voting state
+      const updatedStories = session.stories.map(s => 
         s.id === currentStory.id 
           ? { 
               ...s, 
               status: 'completed',
               averagePoints,
-              votes: session!.participants.reduce((acc, p) => ({
+              votes: session.participants.reduce((acc, p) => ({
                 ...acc,
                 [p.id]: p.currentVote
               }), {})
@@ -135,6 +158,7 @@ export default function SessionPage() {
           : s
       );
 
+      // Single update for both stories and voting state
       await updateDoc(doc(db, 'sessions', sessionId), {
         stories: updatedStories,
         isVotingRevealed: true
@@ -152,12 +176,13 @@ export default function SessionPage() {
       const nextStory = session.stories[currentIndex + 1];
       
       if (nextStory) {
-        // Reset all participants' votes
+        // Batch update next story, voting state, and reset votes
         const resetParticipants = session.participants.map(p => ({
           ...p,
           currentVote: null
         }));
 
+        // Single update for all changes
         await updateDoc(doc(db, 'sessions', sessionId), {
           currentStoryId: nextStory.id,
           isVotingRevealed: false,

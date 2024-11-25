@@ -16,10 +16,7 @@ export default function Home() {
     try {
       setLoading(true);
       const { sessionId, pmId } = await createSession(pmName.trim());
-      // Store PM info in localStorage
-      localStorage.setItem('participant_id', pmId);
-      localStorage.setItem('participant_name', pmName.trim());
-      navigate(`/session/${sessionId}`);
+      navigate(`/session/${sessionId}`, { state: { participantId: pmId } });
     } catch (error) {
       console.error('Failed to create session:', error);
       setLoading(false);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { doc, onSnapshot, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
@@ -11,20 +11,16 @@ import '../styles/pages/Session.css';
 
 export default function SessionPage() {
   const { sessionId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
+  const [participantId, setParticipantId] = useState<string | null>(
+    location.state?.participantId || null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const participantId = localStorage.getItem('participant_id');
   const currentParticipant = session?.participants.find(p => p.id === participantId);
-
-  // If no participant info, redirect to join page
-  useEffect(() => {
-    if (!participantId && sessionId) {
-      navigate(`/session/${sessionId}/join`);
-    }
-  }, [participantId, sessionId, navigate]);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -50,6 +46,13 @@ export default function SessionPage() {
 
     return () => unsubscribe();
   }, [sessionId]);
+
+  // If no participant info, redirect to join page
+  useEffect(() => {
+    if (!participantId && sessionId && !loading) {
+      navigate(`/session/${sessionId}/join`);
+    }
+  }, [participantId, sessionId, loading, navigate]);
 
   const handleAddStory = async (story: Omit<UserStory, 'id'>) => {
     if (!sessionId || !currentParticipant?.isPM) return;

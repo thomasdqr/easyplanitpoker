@@ -1,65 +1,65 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
-import { Participant, Session } from '../types';
-import '../styles/pages/Session.css';
+import { v4 as uuidv4 } from 'uuid';
+import type { Session } from '../types';
 
 export default function JoinSession() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
-  const [participantName, setParticipantName] = useState('');
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleJoinSession = async (e: React.FormEvent) => {
+  const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sessionId || !participantName.trim() || loading) return;
+    if (!sessionId || !name.trim() || loading) return;
 
     try {
       setLoading(true);
       const sessionRef = doc(db, 'sessions', sessionId);
       const sessionSnap = await getDoc(sessionRef);
-      
+
       if (!sessionSnap.exists()) {
-        throw new Error('Session not found');
+        setError('Session not found');
+        setLoading(false);
+        return;
       }
 
-      const newParticipant: Participant = {
-        id: crypto.randomUUID(),
-        name: participantName.trim(),
-        isPM: false,
-        currentVote: null,
-        connected: true
-      };
+      const sessionData = sessionSnap.data() as Session;
+      const newParticipantId = uuidv4();
 
-      const session = sessionSnap.data() as Session;
       await updateDoc(sessionRef, {
-        participants: [...session.participants, newParticipant]
+        participants: [
+          ...sessionData.participants,
+          {
+            id: newParticipantId,
+            name: name.trim(),
+            isPM: false,
+            currentVote: null,
+            connected: true
+          }
+        ]
       });
 
-      localStorage.setItem('participant_id', newParticipant.id);
-      localStorage.setItem('participant_name', participantName.trim());
-      
-      navigate(`/session/${sessionId}`);
+      navigate(`/session/${sessionId}`, { state: { participantId: newParticipantId } });
     } catch (error) {
-      console.error('Join session error:', error);
+      console.error('Failed to join session:', error);
+      setError('Failed to join session');
       setLoading(false);
     }
   };
 
   return (
-    <motion.div 
-      className="join-dialog"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
-      <h2>Join Planning Session</h2>
-      <form onSubmit={handleJoinSession}>
+    <div className="join-dialog">
+      <h2>Join Session</h2>
+      {error && <div className="error-message">{error}</div>}
+      <form onSubmit={handleJoin}>
         <input
           type="text"
-          value={participantName}
-          onChange={(e) => setParticipantName(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           placeholder="Enter your name"
           required
           disabled={loading}
@@ -68,6 +68,6 @@ export default function JoinSession() {
           {loading ? 'Joining...' : 'Join Session'}
         </button>
       </form>
-    </motion.div>
+    </div>
   );
 } 

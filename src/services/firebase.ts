@@ -27,7 +27,6 @@ export async function createSession(pmName: string): Promise<{ sessionId: string
     connected: true
   };
 
-  // Create session document with initial data
   const sessionData: Session = {
     id: sessionId,
     pmId,

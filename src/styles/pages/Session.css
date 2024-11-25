@@ -73,29 +73,43 @@
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-sm);
-}
-
-.session-link {
-  color: var(--text-color);
-  opacity: 0.7;
+  height: 40px;
 }
 
 .copy-link-button {
+  min-width: 120px;
+  height: 32px;
   background: var(--accent-gradient);
   color: white;
   border: none;
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: 0 var(--spacing-md);
   border-radius: var(--border-radius-md);
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
 }
 
 .copy-link-button:hover {
   filter: brightness(1.1);
+  box-shadow: var(--shadow-md);
 }
 
 .copy-link-button.copied {
   background: var(--success-text);
+}
+
+.copy-link-button svg {
+  font-size: 18px;
+}
+
+.copy-link-button span {
+  font-size: inherit;
+  white-space: nowrap;
 }
 
 .stories-section {
@@ -142,7 +156,8 @@
 .reveal-votes-button {
   margin-top: var(--spacing-lg);
   width: 100%;
-  padding: var(--spacing-md);
+  height: 40px;
+  padding: 0 var(--spacing-md);
   background: var(--accent-gradient);
   color: white;
   border: none;
@@ -152,6 +167,10 @@
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
 }
 
 .reveal-votes-button:disabled {
@@ -159,6 +178,14 @@
   color: var(--disabled-text);
   opacity: 1;
   cursor: not-allowed;
+}
+
+.reveal-votes-button svg {
+  font-size: 18px;
+}
+
+.reveal-votes-button span {
+  line-height: 1;
 }
 
 .error-container {
@@ -283,4 +310,39 @@
   flex: 1;
   overflow-y: auto;
   padding-right: var(--spacing-md);
-} 
+}
+
+.add-story-form button {
+  background: var(--accent-gradient);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+}
+
+.add-story-form button:hover {
+  filter: brightness(1.1);
+}
+
+.add-story-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--disabled-background);
+}
+
+.add-story-form button svg {
+  font-size: 18px;
+}
+
+.add-story-form button span {
+  font-size: inherit;
+  white-space: nowrap;
+}
+ 

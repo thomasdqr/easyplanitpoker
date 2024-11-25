@@ -8,6 +8,10 @@ import UserStoryList from '../components/Session/UserStoryList';
 import ParticipantList from '../components/Session/ParticipantList';
 import type { UserStory, Participant, Session } from '../types';
 import '../styles/pages/Session.css';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function SessionPage() {
   const { sessionId } = useParams();
@@ -280,6 +284,7 @@ export default function SessionPage() {
                 </>
               ) : (
                 <>
+                  <ContentCopyIcon fontSize="small" />
                   <span>Copy Link</span>
                 </>
               )}
@@ -307,7 +312,17 @@ export default function SessionPage() {
                       : !canRevealVotes
                   }
                 >
-                  {session!.isVotingRevealed ? 'Next Story' : 'Reveal Votes'}
+                  {session!.isVotingRevealed ? (
+                    <>
+                      <NavigateNextIcon />
+                      <span>Next Story</span>
+                    </>
+                  ) : (
+                    <>
+                      <VisibilityIcon />
+                      <span>Reveal Votes</span>
+                    </>
+                  )}
                 </button>
               )}
             </section>
@@ -326,7 +341,10 @@ export default function SessionPage() {
                       placeholder="Add a new user story"
                       required
                     />
-                    <button type="submit">Add Story</button>
+                    <button type="submit">
+                      <AddIcon fontSize="small" />
+                      <span>Add Story</span>
+                    </button>
                   </form>
                 )}
               </div>

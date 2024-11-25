@@ -13,25 +13,67 @@
 
 .session-content {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 300px 1fr;
   gap: var(--spacing-lg);
   margin-bottom: var(--spacing-xl);
+  height: calc(100vh - 200px);
+  overflow: hidden;
 }
 
-.left-panel, .right-panel {
+.left-panel {
   background-color: var(--card-background);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-lg);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  overflow-y: auto;
+}
+
+.stories-section {
+  background-color: var(--card-background);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
 .session-footer {
   position: sticky;
   bottom: 0;
   background-color: var(--card-background);
-  padding: var(--spacing-md);
+  padding: var(--spacing-xl);
   border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reveal-votes-button {
+  margin-top: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.reveal-votes-button:hover {
+  background-color: var(--primary-color);
+}
+
+.reveal-votes-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .join-dialog {

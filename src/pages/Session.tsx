@@ -101,6 +101,75 @@ export default function SessionPage() {
     }
   };
 
+  const handleRevealVotes = async () => {
+    if (!sessionId || !currentParticipant?.isPM) return;
+
+    try {
+      const currentStory = session!.stories.find(s => s.id === session!.currentStoryId);
+      if (!currentStory) return;
+
+      // Calculate average points
+      const votes = session!.participants
+        .map(p => p.currentVote)
+        .filter((vote): vote is number => vote !== null && vote >= 0);
+      
+      const averagePoints = votes.length > 0 
+        ? Math.round(votes.reduce((a, b) => a + b, 0) / votes.length) 
+        : 0;
+
+      // Update story with votes and average
+      const updatedStories = session!.stories.map(s => 
+        s.id === currentStory.id 
+          ? { 
+              ...s, 
+              status: 'completed',
+              averagePoints,
+              votes: session!.participants.reduce((acc, p) => ({
+                ...acc,
+                [p.id]: p.currentVote
+              }), {})
+            } 
+          : s
+      );
+
+      await updateDoc(doc(db, 'sessions', sessionId), {
+        stories: updatedStories,
+        isVotingRevealed: true
+      });
+    } catch (error) {
+      console.error('Error revealing votes:', error);
+    }
+  };
+
+  const handleNextStory = async () => {
+    if (!sessionId || !currentParticipant?.isPM || !session) return;
+
+    try {
+      const currentIndex = session.stories.findIndex(s => s.id === session.currentStoryId);
+      const nextStory = session.stories[currentIndex + 1];
+      
+      if (nextStory) {
+        // Reset all participants' votes
+        const resetParticipants = session.participants.map(p => ({
+          ...p,
+          currentVote: null
+        }));
+
+        await updateDoc(doc(db, 'sessions', sessionId), {
+          currentStoryId: nextStory.id,
+          isVotingRevealed: false,
+          participants: resetParticipants
+        });
+      }
+    } catch (error) {
+      console.error('Error moving to next story:', error);
+    }
+  };
+
+  const canRevealVotes = session?.participants.every(p => 
+    p.currentVote !== null || p.currentVote === -1
+  );
+
   if (error) {
     return (
       <div className="error-container">
@@ -136,32 +205,49 @@ export default function SessionPage() {
 
       <div className="session-content">
         <div className="left-panel">
-          <h2>User Stories</h2>
-          <UserStoryList
-            stories={session!.stories}
-            currentStoryId={session!.currentStoryId || undefined}
-            isPM={currentParticipant?.isPM || false}
-            onAddStory={handleAddStory}
-            onSelectStory={handleSelectStory}
-          />
-        </div>
-
-        <div className="right-panel">
           <h2>Participants</h2>
           <ParticipantList
             participants={session!.participants}
             isVotingRevealed={session!.isVotingRevealed}
           />
+          {currentParticipant?.isPM && (
+            <button 
+              className="reveal-votes-button"
+              onClick={session!.isVotingRevealed ? handleNextStory : handleRevealVotes}
+              disabled={
+                session!.isVotingRevealed 
+                  ? !session!.stories.find((s, i) => 
+                      i > session!.stories.findIndex(story => story.id === session!.currentStoryId)
+                    )
+                  : !canRevealVotes
+              }
+            >
+              {session!.isVotingRevealed ? 'Next Story' : 'Reveal Votes'}
+            </button>
+          )}
+        </div>
+
+        <div className="right-panel">
+          <div className="stories-section">
+            <h2>User Stories</h2>
+            <UserStoryList
+              stories={session!.stories}
+              currentStoryId={session!.currentStoryId || undefined}
+              isPM={currentParticipant?.isPM || false}
+              onAddStory={handleAddStory}
+              onSelectStory={handleSelectStory}
+            />
+          </div>
+          
+          <footer className="session-footer">
+            <VotingCards 
+              onVote={handleVote}
+              selectedValue={currentParticipant?.currentVote || undefined}
+              disabled={!session!.currentStoryId || session!.isVotingRevealed}
+            />
+          </footer>
         </div>
       </div>
-
-      <footer className="session-footer">
-        <VotingCards 
-          onVote={handleVote}
-          selectedValue={currentParticipant?.currentVote || undefined}
-          disabled={!session!.currentStoryId || session!.isVotingRevealed}
-        />
-      </footer>
     </motion.div>
   );
 } 

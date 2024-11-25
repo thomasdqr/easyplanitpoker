@@ -39,17 +39,6 @@
   font-size: 0.8rem;
 }
 
-.connection-status {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #22c55e;
-}
-
-.disconnected .connection-status {
-  background-color: #ef4444;
-}
-
 .vote-status {
   font-size: 0.9rem;
 }

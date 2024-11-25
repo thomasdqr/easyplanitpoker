@@ -4,6 +4,7 @@ export interface UserStory {
   description?: string;
   votes: Record<string, number>;
   status: 'pending' | 'voting' | 'completed';
+  averagePoints?: number;
 }
 
 export interface Participant {

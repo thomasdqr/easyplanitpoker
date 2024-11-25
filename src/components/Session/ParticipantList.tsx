@@ -24,17 +24,18 @@ export default function ParticipantList({ participants, isVotingRevealed }: Prop
                 {participant.name}
                 {participant.isPM && <span className="pm-badge">PM</span>}
               </span>
-              <span className="connection-status" />
             </div>
             <div className="vote-status">
-              {participant.currentVote !== undefined ? (
+              {participant.currentVote !== null ? (
                 isVotingRevealed ? (
-                  <span className="vote-value">{participant.currentVote}</span>
+                  <span className="vote-value">
+                    {participant.currentVote === -1 ? '?' : participant.currentVote}
+                  </span>
                 ) : (
-                  <span className="vote-ready">Ready</span>
+                  <span className="vote-ready">✓ Voted</span>
                 )
               ) : (
-                <span className="vote-pending">Thinking...</span>
+                <span className="vote-pending">Waiting...</span>
               )}
             </div>
           </motion.div>

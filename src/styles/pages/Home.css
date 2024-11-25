@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-lg);
-  background: white;
+  background: #f8f9ff;
   position: relative;
   overflow: hidden;
 }
@@ -24,36 +24,34 @@
 .dot {
   position: absolute;
   border-radius: 50%;
-  filter: blur(50px);
-  opacity: 0.15;
-  animation: floatDot linear infinite;
+  filter: blur(60px);
+  opacity: 0.25;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
 }
 
-.dot:nth-child(1) {
+.dot-1 {
+  width: 500px;
+  height: 500px;
+  background: #818cf8;
+  top: -15%;
+  left: -15%;
+}
+
+.dot-2 {
   width: 400px;
   height: 400px;
-  background: #818cf8;
-  top: -10%;
-  left: -10%;
-  animation-duration: 25s;
-}
-
-.dot:nth-child(2) {
-  width: 300px;
-  height: 300px;
   background: #6366f1;
   top: 60%;
-  right: -5%;
-  animation-duration: 30s;
+  right: -10%;
 }
 
-.dot:nth-child(3) {
-  width: 250px;
-  height: 250px;
+.dot-3 {
+  width: 350px;
+  height: 350px;
   background: #4f46e5;
-  bottom: -10%;
+  bottom: -15%;
   left: 30%;
-  animation-duration: 20s;
 }
 
 /* Rest of the styles remain the same but remove cursor-glow */

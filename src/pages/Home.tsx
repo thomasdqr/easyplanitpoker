@@ -7,15 +7,44 @@ import '../styles/pages/Home.css';
 export default function Home() {
   const [pmName, setPmName] = useState('');
   const [loading, setLoading] = useState(false);
-  const cursorGlowRef = useRef<HTMLDivElement>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (cursorGlowRef.current) {
-        cursorGlowRef.current.style.left = `${e.clientX}px`;
-        cursorGlowRef.current.style.top = `${e.clientY}px`;
-      }
+      const { clientX, clientY } = e;
+      setMousePosition({ x: clientX, y: clientY });
+
+      // Update each dot's position based on distance from cursor
+      dotsRef.current.forEach((dot, index) => {
+        if (!dot) return;
+
+        const rect = dot.getBoundingClientRect();
+        const dotCenterX = rect.left + rect.width / 2;
+        const dotCenterY = rect.top + rect.height / 2;
+
+        // Calculate distance between dot and cursor
+        const distanceX = clientX - dotCenterX;
+        const distanceY = clientY - dotCenterY;
+        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        // Maximum distance for interaction
+        const maxDistance = 400;
+        
+        if (distance < maxDistance) {
+          // Calculate movement strength (stronger when closer)
+          const strength = (maxDistance - distance) / maxDistance;
+          const moveX = (distanceX / distance) * strength * 30;
+          const moveY = (distanceY / distance) * strength * 30;
+
+          // Apply transform with both the floating animation and mouse interaction
+          dot.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        } else {
+          // Reset position if cursor is too far
+          dot.style.transform = 'translate(0, 0)';
+        }
+      });
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -39,9 +68,13 @@ export default function Home() {
   return (
     <div className="home-container">
       <div className="background-dots">
-        <div className="dot" />
-        <div className="dot" />
-        <div className="dot" />
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            ref={el => dotsRef.current[i] = el}
+            className={`dot dot-${i + 1}`}
+          />
+        ))}
       </div>
       
       <div className="hero-section">

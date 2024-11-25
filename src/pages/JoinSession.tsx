@@ -52,22 +52,29 @@ export default function JoinSession() {
   };
 
   return (
-    <div className="join-dialog">
-      <h2>Join Session</h2>
-      {error && <div className="error-message">{error}</div>}
-      <form onSubmit={handleJoin}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter your name"
-          required
-          disabled={loading}
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Joining...' : 'Join Session'}
-        </button>
-      </form>
+    <div className="join-session-container">
+      <div className="background-dots">
+        <div className="dot dot-1" />
+        <div className="dot dot-2" />
+        <div className="dot dot-3" />
+      </div>
+      <div className="join-dialog">
+        <h2>Join Session</h2>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleJoin}>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+            required
+            disabled={loading}
+          />
+          <button type="submit" disabled={loading}>
+            {loading ? 'Joining...' : 'Join Session'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 } 

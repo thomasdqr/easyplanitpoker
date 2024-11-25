@@ -263,91 +263,93 @@ export default function SessionPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <header className="session-header">
-        <h1>Planning Session</h1>
-        <div className="copy-link-container">
-          <span className="session-link">
-            {window.location.href.slice(0, 40)}...
-          </span>
-          <button 
-            className={`copy-link-button ${copied ? 'copied' : ''}`}
-            onClick={handleCopyLink}
-          >
-            {copied ? (
-              <>
-                <span>✓ Copied!</span>
-              </>
-            ) : (
-              <>
-                <span>Copy Link</span>
-              </>
-            )}
-          </button>
-        </div>
-      </header>
-
-      <div className="session-content">
-        <div className="left-panel">
-          <section className="participants-section">
-            <h2>Participants</h2>
-            <ParticipantList
-              participants={session!.participants}
-              isVotingRevealed={session!.isVotingRevealed}
-            />
-            {currentParticipant?.isPM && (
-              <button 
-                className="reveal-votes-button"
-                onClick={session!.isVotingRevealed ? handleNextStory : handleRevealVotes}
-                disabled={
-                  session!.isVotingRevealed 
-                    ? !session!.stories.find((s, i) => 
-                        i > session!.stories.findIndex(story => story.id === session!.currentStoryId)
-                      )
-                    : !canRevealVotes
-                }
-              >
-                {session!.isVotingRevealed ? 'Next Story' : 'Reveal Votes'}
-              </button>
-            )}
-          </section>
-        </div>
-
-        <div className="right-panel">
-          <section className="stories-section">
-            <div className="stories-header">
-              <h2>User Stories</h2>
-              {currentParticipant?.isPM && (
-                <form onSubmit={handleAddStory} className="add-story-form">
-                  <input
-                    type="text"
-                    value={newStoryTitle}
-                    onChange={(e) => setNewStoryTitle(e.target.value)}
-                    placeholder="Add a new user story"
-                    required
-                  />
-                  <button type="submit">Add Story</button>
-                </form>
+      <div className="session-wrapper">
+        <header className="session-header">
+          <h1>Planning Session</h1>
+          <div className="copy-link-container">
+            <span className="session-link">
+              {window.location.href.slice(0, 40)}...
+            </span>
+            <button 
+              className={`copy-link-button ${copied ? 'copied' : ''}`}
+              onClick={handleCopyLink}
+            >
+              {copied ? (
+                <>
+                  <span>✓ Copied!</span>
+                </>
+              ) : (
+                <>
+                  <span>Copy Link</span>
+                </>
               )}
-            </div>
-            <div className="stories-content">
-              <UserStoryList
-                stories={session!.stories}
-                currentStoryId={session!.currentStoryId || undefined}
-                isPM={currentParticipant?.isPM || false}
-                onAddStory={handleAddStory}
-                onSelectStory={handleSelectStory}
-                onDeleteStory={handleDeleteStory}
-              />
-            </div>
-          </section>
+            </button>
+          </div>
+        </header>
 
-          <section className="voting-section">
-            <VotingCards 
-              onVote={handleVote}
-              selectedValue={currentParticipant?.currentVote || undefined}
-              disabled={!session!.currentStoryId || session!.isVotingRevealed}
-            />
-          </section>
+        <div className="session-content">
+          <div className="left-panel">
+            <section className="participants-section">
+              <h2>Participants</h2>
+              <ParticipantList
+                participants={session!.participants}
+                isVotingRevealed={session!.isVotingRevealed}
+              />
+              {currentParticipant?.isPM && (
+                <button 
+                  className="reveal-votes-button"
+                  onClick={session!.isVotingRevealed ? handleNextStory : handleRevealVotes}
+                  disabled={
+                    session!.isVotingRevealed 
+                      ? !session!.stories.find((s, i) => 
+                          i > session!.stories.findIndex(story => story.id === session!.currentStoryId)
+                        )
+                      : !canRevealVotes
+                  }
+                >
+                  {session!.isVotingRevealed ? 'Next Story' : 'Reveal Votes'}
+                </button>
+              )}
+            </section>
+          </div>
+
+          <div className="right-panel">
+            <section className="stories-section">
+              <div className="stories-header">
+                <h2>User Stories</h2>
+                {currentParticipant?.isPM && (
+                  <form onSubmit={handleAddStory} className="add-story-form">
+                    <input
+                      type="text"
+                      value={newStoryTitle}
+                      onChange={(e) => setNewStoryTitle(e.target.value)}
+                      placeholder="Add a new user story"
+                      required
+                    />
+                    <button type="submit">Add Story</button>
+                  </form>
+                )}
+              </div>
+              <div className="stories-content">
+                <UserStoryList
+                  stories={session!.stories}
+                  currentStoryId={session!.currentStoryId || undefined}
+                  isPM={currentParticipant?.isPM || false}
+                  onAddStory={handleAddStory}
+                  onSelectStory={handleSelectStory}
+                  onDeleteStory={handleDeleteStory}
+                />
+              </div>
+            </section>
+
+            <section className="voting-section">
+              <VotingCards 
+                onVote={handleVote}
+                selectedValue={currentParticipant?.currentVote || undefined}
+                disabled={!session!.currentStoryId || session!.isVotingRevealed}
+              />
+            </section>
+          </div>
         </div>
       </div>
     </motion.div>

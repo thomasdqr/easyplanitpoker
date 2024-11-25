@@ -1,7 +1,6 @@
 export interface UserStory {
   id: string;
   title: string;
-  description?: string;
   votes: Record<string, number>;
   status: 'pending' | 'voting' | 'completed';
   averagePoints?: number;

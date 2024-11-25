@@ -19,6 +19,7 @@ export default function SessionPage() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const currentParticipant = session?.participants.find(p => p.id === participantId);
 
@@ -198,6 +199,16 @@ export default function SessionPage() {
     p.currentVote !== null || p.currentVote === -1
   );
 
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+    }
+  };
+
   if (error) {
     return (
       <div className="error-container">
@@ -221,59 +232,85 @@ export default function SessionPage() {
     >
       <header className="session-header">
         <h1>Planning Session</h1>
-        <button 
-          className="copy-link-button"
-          onClick={() => {
-            navigator.clipboard.writeText(window.location.href);
-          }}
-        >
-          Copy Invitation Link
-        </button>
+        <div className="copy-link-container">
+          <span className="session-link">
+            {window.location.href.slice(0, 40)}...
+          </span>
+          <button 
+            className={`copy-link-button ${copied ? 'copied' : ''}`}
+            onClick={handleCopyLink}
+          >
+            {copied ? (
+              <>
+                <span>✓ Copied!</span>
+              </>
+            ) : (
+              <>
+                <span>Copy Link</span>
+              </>
+            )}
+          </button>
+        </div>
       </header>
 
       <div className="session-content">
         <div className="left-panel">
-          <h2>Participants</h2>
-          <ParticipantList
-            participants={session!.participants}
-            isVotingRevealed={session!.isVotingRevealed}
-          />
-          {currentParticipant?.isPM && (
-            <button 
-              className="reveal-votes-button"
-              onClick={session!.isVotingRevealed ? handleNextStory : handleRevealVotes}
-              disabled={
-                session!.isVotingRevealed 
-                  ? !session!.stories.find((s, i) => 
-                      i > session!.stories.findIndex(story => story.id === session!.currentStoryId)
-                    )
-                  : !canRevealVotes
-              }
-            >
-              {session!.isVotingRevealed ? 'Next Story' : 'Reveal Votes'}
-            </button>
-          )}
+          <section className="participants-section">
+            <h2>Participants</h2>
+            <ParticipantList
+              participants={session!.participants}
+              isVotingRevealed={session!.isVotingRevealed}
+            />
+            {currentParticipant?.isPM && (
+              <button 
+                className="reveal-votes-button"
+                onClick={session!.isVotingRevealed ? handleNextStory : handleRevealVotes}
+                disabled={
+                  session!.isVotingRevealed 
+                    ? !session!.stories.find((s, i) => 
+                        i > session!.stories.findIndex(story => story.id === session!.currentStoryId)
+                      )
+                    : !canRevealVotes
+                }
+              >
+                {session!.isVotingRevealed ? 'Next Story' : 'Reveal Votes'}
+              </button>
+            )}
+          </section>
         </div>
 
         <div className="right-panel">
-          <div className="stories-section">
-            <h2>User Stories</h2>
-            <UserStoryList
-              stories={session!.stories}
-              currentStoryId={session!.currentStoryId || undefined}
-              isPM={currentParticipant?.isPM || false}
-              onAddStory={handleAddStory}
-              onSelectStory={handleSelectStory}
-            />
-          </div>
-          
-          <footer className="session-footer">
+          <section className="stories-section">
+            <div className="stories-header">
+              <h2>User Stories</h2>
+              {currentParticipant?.isPM && (
+                <UserStoryList
+                  stories={[]}  // Empty array since we only want the form here
+                  currentStoryId={session!.currentStoryId || undefined}
+                  isPM={true}
+                  onAddStory={handleAddStory}
+                  onSelectStory={handleSelectStory}
+                />
+              )}
+            </div>
+            <div className="stories-content">
+              <UserStoryList
+                stories={session!.stories}
+                currentStoryId={session!.currentStoryId || undefined}
+                isPM={currentParticipant?.isPM || false}
+                onAddStory={handleAddStory}
+                onSelectStory={handleSelectStory}
+              />
+            </div>
+          </section>
+
+          <section className="voting-section">
             <VotingCards 
               onVote={handleVote}
               selectedValue={currentParticipant?.currentVote || undefined}
               disabled={!session!.currentStoryId || session!.isVotingRevealed}
             />
-          </footer>
+          </section>
         </div>
       </div>
     </motion.div>

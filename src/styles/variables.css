@@ -1,10 +1,23 @@
 :root {
   /* Colors */
-  --primary-color: #2563eb;
-  --secondary-color: #3b82f6;
-  --background-color: #f8fafc;
-  --text-color: #1e293b;
+  --background-color: #fafafa;
   --card-background: #ffffff;
+  --text-color: #1f2937;
+  --border-color: #e2e8f0;
+  --border-color-hover: #cbd5e1;
+  --hover-color: #f8fafc;
+  
+  /* Accent Colors */
+  --accent-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+  --success-background: #f0fdf4;
+  --success-border: #86efac;
+  --success-text: #16a34a;
+  --disabled-background: #e2e8f0;
+  --disabled-text: #64748b;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -22,4 +35,7 @@
   --transition-fast: 150ms ease;
   --transition-normal: 300ms ease;
   --transition-slow: 500ms ease;
+  
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 } 

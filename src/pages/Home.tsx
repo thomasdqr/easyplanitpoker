@@ -24,26 +24,36 @@ export default function Home() {
   };
 
   return (
-    <motion.div 
-      className="home-container"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <h1>Planning Poker</h1>
-      <form onSubmit={handleCreateSession}>
-        <input
-          type="text"
-          value={pmName}
-          onChange={(e) => setPmName(e.target.value)}
-          placeholder="Enter your name (PM)"
-          required
-          disabled={loading}
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Creating Session...' : 'Create Session'}
-        </button>
-      </form>
-    </motion.div>
+    <div className="home-container">
+      <div className="floating-cards">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="floating-card" />
+        ))}
+      </div>
+      <motion.div 
+        className="content-wrapper"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <h1>Planning Poker</h1>
+        <form onSubmit={handleCreateSession}>
+          <input
+            type="text"
+            value={pmName}
+            onChange={(e) => setPmName(e.target.value)}
+            placeholder="Enter your name (PM)"
+            required
+            disabled={loading}
+          />
+          <button 
+            type="submit" 
+            disabled={loading}
+          >
+            {loading ? 'Creating Session...' : 'Create Session'}
+          </button>
+        </form>
+      </motion.div>
+    </div>
   );
 } 

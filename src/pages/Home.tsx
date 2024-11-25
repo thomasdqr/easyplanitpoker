@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createSession } from '../services/firebase';
@@ -7,7 +7,20 @@ import '../styles/pages/Home.css';
 export default function Home() {
   const [pmName, setPmName] = useState('');
   const [loading, setLoading] = useState(false);
+  const cursorGlowRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (cursorGlowRef.current) {
+        cursorGlowRef.current.style.left = `${e.clientX}px`;
+        cursorGlowRef.current.style.top = `${e.clientY}px`;
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const handleCreateSession = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,18 +38,26 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <div className="floating-cards">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="floating-card" />
-        ))}
+      <div className="background-dots">
+        <div className="dot" />
+        <div className="dot" />
+        <div className="dot" />
       </div>
+      
+      <div className="hero-section">
+        <h1 className="hero-title">Planning Poker</h1>
+        <p className="hero-subtitle">
+          Streamline your agile estimation process with our intuitive and collaborative planning poker tool
+        </p>
+      </div>
+
       <motion.div 
         className="content-wrapper"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <h1>Planning Poker</h1>
+        <h1>Start a Session</h1>
         <form onSubmit={handleCreateSession}>
           <input
             type="text"
@@ -46,10 +67,7 @@ export default function Home() {
             required
             disabled={loading}
           />
-          <button 
-            type="submit" 
-            disabled={loading}
-          >
+          <button type="submit" disabled={loading}>
             {loading ? 'Creating Session...' : 'Create Session'}
           </button>
         </form>

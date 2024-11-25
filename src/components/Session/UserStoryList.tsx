@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { UserStory } from '../../types';
 import './UserStoryList.css';
 
@@ -9,6 +10,7 @@ interface Props {
   isPM: boolean;
   onAddStory: (story: Omit<UserStory, 'id'>) => void;
   onSelectStory: (storyId: string) => void;
+  onDeleteStory: (storyId: string) => void;
 }
 
 export default function UserStoryList({ 
@@ -16,7 +18,8 @@ export default function UserStoryList({
   currentStoryId, 
   isPM, 
   onAddStory, 
-  onSelectStory 
+  onSelectStory,
+  onDeleteStory 
 }: Props) {
   const [newStoryTitle, setNewStoryTitle] = useState('');
 
@@ -33,20 +36,18 @@ export default function UserStoryList({
     setNewStoryTitle('');
   };
 
-  // If no stories provided, only render the form
+  const handleDelete = (e: React.MouseEvent, storyId: string) => {
+    e.stopPropagation(); // Prevent story selection when clicking delete
+    onDeleteStory(storyId);
+  };
+
+  // If no stories, show empty state message
   if (stories.length === 0) {
-    return isPM ? (
-      <form onSubmit={handleSubmit} className="add-story-form">
-        <input
-          type="text"
-          value={newStoryTitle}
-          onChange={(e) => setNewStoryTitle(e.target.value)}
-          placeholder="Add a new user story"
-          required
-        />
-        <button type="submit">Add Story</button>
-      </form>
-    ) : null;
+    return (
+      <div className="user-story-list empty">
+        <p>No stories have been added yet.</p>
+      </div>
+    );
   }
 
   // Otherwise render the story list
@@ -70,7 +71,18 @@ export default function UserStoryList({
                 </div>
               )}
             </div>
-            <div className="story-status">{story.status}</div>
+            <div className="story-actions">
+              <div className="story-status">{story.status}</div>
+              {isPM && (
+                <button 
+                  className="delete-story-button"
+                  onClick={(e) => handleDelete(e, story.id)}
+                  title="Delete Story"
+                >
+                  <DeleteOutlineIcon fontSize="small" />
+                </button>
+              )}
+            </div>
           </motion.div>
         ))}
       </AnimatePresence>

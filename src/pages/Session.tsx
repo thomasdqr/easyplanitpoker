@@ -20,6 +20,7 @@ export default function SessionPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [newStoryTitle, setNewStoryTitle] = useState('');
 
   const currentParticipant = session?.participants.find(p => p.id === participantId);
 
@@ -55,13 +56,14 @@ export default function SessionPage() {
     }
   }, [participantId, sessionId, loading, navigate]);
 
-  const handleAddStory = async (story: Omit<UserStory, 'id'>) => {
-    if (!sessionId || !currentParticipant?.isPM || !session) return;
+  const handleAddStory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sessionId || !currentParticipant?.isPM || !session || !newStoryTitle.trim()) return;
 
     try {
       const newStory: UserStory = {
-        ...story,
         id: crypto.randomUUID(),
+        title: newStoryTitle.trim(),
         votes: {},
         status: 'pending'
       };
@@ -77,6 +79,7 @@ export default function SessionPage() {
 
       // Single update for both changes if needed
       await updateDoc(doc(db, 'sessions', sessionId), updates);
+      setNewStoryTitle(''); // Clear input after successful add
     } catch (error) {
       console.error('Error adding story:', error);
     }
@@ -209,6 +212,36 @@ export default function SessionPage() {
     }
   };
 
+  const handleDeleteStory = async (storyId: string) => {
+    if (!sessionId || !currentParticipant?.isPM || !session) return;
+
+    try {
+      const updatedStories = session.stories.filter(story => story.id !== storyId);
+      const updates: Partial<Session> = {
+        stories: updatedStories
+      };
+
+      // If deleting current story, select the next available one or clear selection
+      if (session.currentStoryId === storyId) {
+        const currentIndex = session.stories.findIndex(s => s.id === storyId);
+        const nextStory = session.stories[currentIndex + 1] || session.stories[currentIndex - 1];
+        updates.currentStoryId = nextStory?.id || null;
+        
+        if (!nextStory) {
+          // Reset all votes if no next story
+          updates.participants = session.participants.map(p => ({
+            ...p,
+            currentVote: null
+          }));
+        }
+      }
+
+      await updateDoc(doc(db, 'sessions', sessionId), updates);
+    } catch (error) {
+      console.error('Error deleting story:', error);
+    }
+  };
+
   if (error) {
     return (
       <div className="error-container">
@@ -284,13 +317,16 @@ export default function SessionPage() {
             <div className="stories-header">
               <h2>User Stories</h2>
               {currentParticipant?.isPM && (
-                <UserStoryList
-                  stories={[]}  // Empty array since we only want the form here
-                  currentStoryId={session!.currentStoryId || undefined}
-                  isPM={true}
-                  onAddStory={handleAddStory}
-                  onSelectStory={handleSelectStory}
-                />
+                <form onSubmit={handleAddStory} className="add-story-form">
+                  <input
+                    type="text"
+                    value={newStoryTitle}
+                    onChange={(e) => setNewStoryTitle(e.target.value)}
+                    placeholder="Add a new user story"
+                    required
+                  />
+                  <button type="submit">Add Story</button>
+                </form>
               )}
             </div>
             <div className="stories-content">
@@ -300,6 +336,7 @@ export default function SessionPage() {
                 isPM={currentParticipant?.isPM || false}
                 onAddStory={handleAddStory}
                 onSelectStory={handleSelectStory}
+                onDeleteStory={handleDeleteStory}
               />
             </div>
           </section>

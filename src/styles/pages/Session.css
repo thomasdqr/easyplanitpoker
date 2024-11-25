@@ -165,8 +165,6 @@
 .stories-content {
   flex: 1;
   overflow-y: auto;
-  padding-right: var(--spacing-lg);
-  padding-left: var(--spacing-lg);
 }
 
 .voting-section {

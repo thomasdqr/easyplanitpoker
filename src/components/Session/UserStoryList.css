@@ -68,6 +68,7 @@
   align-items: center;
   gap: var(--spacing-md);
   height: 64px;
+  padding-right: var(--spacing-sm);
 }
 
 .story-card:hover {
@@ -122,4 +123,64 @@
 
 .selected .story-status {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.user-story-list.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  background: var(--card-background);
+  border-radius: var(--border-radius-md);
+  border: 2px dashed var(--border-color);
+}
+
+.user-story-list.empty p {
+  color: var(--text-color);
+  opacity: 0.7;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.story-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.delete-story-button {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  padding: 4px;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  opacity: 0.6;
+}
+
+.delete-story-button:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(239, 68, 68);
+  opacity: 1;
+}
+
+.selected .delete-story-button {
+  color: white;
+  opacity: 0.8;
+}
+
+.selected .delete-story-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 1;
+}
+
+.story-card:hover .delete-story-button {
+  /* Remove this rule */
 } 

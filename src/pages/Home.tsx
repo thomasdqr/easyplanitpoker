@@ -70,27 +70,22 @@ export default function Home() {
     <div className="home-container">
       <Hero />
       
-      <motion.div 
-        className="content-wrapper"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        <h1>Start a Session</h1>
+      <div className="content-wrapper">
+        <h1>Create New Session</h1>
+        <p className="subtitle">Enter your name to create a new planning poker session</p>
         <form onSubmit={handleCreateSession}>
           <input
             type="text"
             value={pmName}
             onChange={(e) => setPmName(e.target.value)}
-            placeholder="Enter your name (PM)"
+            placeholder="Enter your name"
             required
-            disabled={loading}
           />
           <button type="submit" disabled={loading}>
             {loading ? 'Creating Session...' : 'Create Session'}
           </button>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 } 

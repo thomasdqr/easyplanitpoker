@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { Session, Participant } from '../types';
@@ -55,21 +54,12 @@ export default function JoinSession() {
   };
 
   return (
-    <div className="join-container">
+    <div className="join-session-container">
       <Hero />
-      
-      <motion.div 
-        className="content-wrapper"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        <h1>Join a Session</h1>
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+      <div className="content-wrapper">
+        <h1>Join Planning Session</h1>
+        <p className="subtitle">Enter your name to join the planning poker session</p>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleJoin}>
           <input
             type="text"
@@ -89,7 +79,7 @@ export default function JoinSession() {
             {loading ? 'Joining Session...' : 'Join Session'}
           </Button>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 } 

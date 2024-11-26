@@ -26,13 +26,12 @@
 .card::before {
   content: '';
   position: absolute;
-  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  height: 0;
   background: var(--accent-gradient);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 0;
 }
 
@@ -47,7 +46,7 @@
 }
 
 .card.selected::before {
-  opacity: 1;
+  height: 100%;
 }
 
 .card.selected span {

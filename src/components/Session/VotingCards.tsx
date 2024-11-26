@@ -17,7 +17,7 @@ export default function VotingCards({ onVote, selectedValue, disabled }: Props) 
           key={value}
           className={`card ${selectedValue === value ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
           whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileTap={disabled ? undefined : { backgroundColor: 'rgba(129, 140, 248, 0.25)' }}
           onClick={() => !disabled && onVote(value)}
         >
           <span>{value}</span>

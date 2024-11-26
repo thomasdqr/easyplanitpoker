@@ -7,8 +7,7 @@ import './ThemeToggle.css';
 export default function ThemeToggle() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
-    return savedTheme === 'dark' || 
-      (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    return savedTheme === 'dark';
   });
   const [isTransitioning, setIsTransitioning] = useState(false);
 

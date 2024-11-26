@@ -23,8 +23,10 @@ export default function VotingCards({ onVote, selectedValue, disabled }: Props) 
           key={value}
           className={`card ${isSelected(value) ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
           whileHover={{ scale: 1.05 }}
-          whileTap={disabled ? undefined : { backgroundColor: 'rgba(129, 140, 248, 0.25)' }}
+          whileTap={disabled ? undefined : { scale: 0.95 }}
           onClick={() => !disabled && onVote(value)}
+          initial={{ scale: 1 }}
+          animate={{ scale: 1 }}
         >
           <span>{value}</span>
         </motion.div>

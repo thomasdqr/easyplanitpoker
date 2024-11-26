@@ -45,6 +45,11 @@
   border-color: var(--border-color-hover);
 }
 
+.card:active:not(.disabled),
+.card:focus:not(.disabled) {
+  background: var(--card-background);
+}
+
 .card.selected::before {
   height: 100%;
 }
@@ -75,4 +80,9 @@
   background: var(--dark-disabled-background);
   color: var(--dark-disabled-text);
   border-color: var(--dark-border-color);
+}
+
+.dark-mode .card:active:not(.disabled),
+.dark-mode .card:focus:not(.disabled) {
+  background: var(--dark-card-background);
 } 

@@ -15,7 +15,7 @@ export default function VotingCards({ onVote, selectedValue, disabled }: Props) 
       {VOTING_VALUES.map((value) => (
         <motion.div
           key={value}
-          className={`card ${selectedValue === value ? 'selected' : ''}`}
+          className={`card ${selectedValue === value ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => !disabled && onVote(value)}

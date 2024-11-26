@@ -69,6 +69,16 @@ export default function SessionPage() {
     }
   }, [participantId, sessionId, loading, navigate]);
 
+  // Add effect to check if participant was kicked
+  useEffect(() => {
+    if (!loading && session && participantId) {
+      const isKicked = !session.participants.some(p => p.id === participantId);
+      if (isKicked) {
+        navigate('/', { replace: true });
+      }
+    }
+  }, [session?.participants, participantId, loading, navigate]);
+
   const handleSelectStory = async (storyId: string) => {
     if (!sessionId || !currentParticipant?.isPM || !session) return;
 
@@ -300,6 +310,19 @@ export default function SessionPage() {
     return 'Add Story';
   };
 
+  const handleKickParticipant = async (participantId: string) => {
+    if (!sessionId || !currentParticipant?.isPM || !session) return;
+
+    try {
+      const updatedParticipants = session.participants.filter(p => p.id !== participantId);
+      await updateDoc(doc(db, 'sessions', sessionId), {
+        participants: updatedParticipants
+      });
+    } catch (error) {
+      console.error('Error kicking participant:', error);
+    }
+  };
+
   if (error) {
     return (
       <div className="error-container">
@@ -377,6 +400,9 @@ export default function SessionPage() {
               <ParticipantList
                 participants={session!.participants}
                 isVotingRevealed={session!.isVotingRevealed}
+                isPM={currentParticipant?.isPM}
+                onKickParticipant={handleKickParticipant}
+                currentParticipantId={participantId}
               />
               {currentParticipant?.isPM && (
                 <Button 

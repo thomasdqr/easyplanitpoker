@@ -1,105 +1,37 @@
 .user-story-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--spacing-md);
-}
-
-.add-story-form {
   display: flex;
+  flex-direction: column;
   gap: var(--spacing-md);
-  flex: 1;
-  max-width: 500px;
 }
 
-.add-story-form input {
-  flex: 1;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--background-color);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  color: var(--text-color);
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-
-.add-story-form input::placeholder {
-  color: var(--text-color);
-  opacity: 0.5;
-}
-
-.add-story-form input:focus {
-  outline: none;
-  border-color: #818cf8;
-  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
-}
-
-.add-story-form button {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--accent-gradient);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.add-story-form button:hover:not(:disabled) {
-  filter: brightness(1.1);
-  box-shadow: var(--shadow-md);
-}
-
-.add-story-form button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: var(--disabled-background);
-}
-
-.story-card {
+.story-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
   background: var(--card-background);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  padding: var(--spacing-md);
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--spacing-md);
-  height: 64px;
-  padding-right: var(--spacing-sm);
+  transition: all var(--transition-fast);
 }
 
-.story-card:hover {
+.story-item:hover {
   border-color: var(--border-color-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  background: var(--hover-color);
 }
 
-.story-card.selected {
-  border-color: transparent;
+.story-item.selected {
   background: var(--accent-gradient);
+  border-color: transparent;
   color: white;
-  box-shadow: var(--shadow-md);
-}
-
-.story-card.completed {
-  border-left: 4px solid var(--success-text);
 }
 
 .story-content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.story-title-container {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
+  flex: 1;
   min-width: 0;
 }
 
@@ -134,6 +66,44 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
+.story-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.story-actions button {
+  background: transparent;
+  border: none;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  opacity: 0.7;
+  transition: all var(--transition-fast);
+}
+
+.story-actions button:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.selected .story-actions button {
+  color: white;
+}
+
+.selected .story-actions button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.link-button, .delete-button {
+  width: 32px;
+  height: 32px;
+}
+
 .user-story-list.empty {
   display: flex;
   justify-content: center;
@@ -149,81 +119,4 @@
   opacity: 0.7;
   font-size: 1.1rem;
   margin: 0;
-}
-
-.story-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.delete-story-button {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  padding: 4px;
-  border-radius: 4px;
-  background: transparent;
-  color: var(--text-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  opacity: 0.6;
-}
-
-.delete-story-button:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: rgb(239, 68, 68);
-  opacity: 1;
-}
-
-.selected .delete-story-button {
-  color: white;
-  opacity: 0.8;
-}
-
-.selected .delete-story-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  opacity: 1;
-}
-
-.story-card:hover .delete-story-button {
-  /* Remove this rule */
-}
-
-.story-link-button {
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  padding: 2px;
-  border-radius: 4px;
-  background: transparent;
-  color: var(--text-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  opacity: 0.6;
-  flex-shrink: 0;
-}
-
-.story-link-button:hover {
-  background: rgba(99, 102, 241, 0.1);
-  color: #6366f1;
-  opacity: 1;
-}
-
-.selected .story-link-button {
-  color: white;
-  opacity: 0.8;
-}
-
-.selected .story-link-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  opacity: 1;
 } 

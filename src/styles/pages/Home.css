@@ -302,4 +302,54 @@
     transform: translate(0, 0) scale(1);
   }
 }
+
+/* Add dark mode styles */
+.dark-mode .home-container {
+  background: linear-gradient(-45deg, #0f172a, #1e293b);
+}
+
+.dark-mode .content-wrapper {
+  background: var(--dark-card-background);
+  border-color: var(--dark-border-color);
+}
+
+.dark-mode .feature-card {
+  background: var(--dark-card-background);
+  border-color: var(--dark-border-color);
+}
+
+.dark-mode .feature-card:hover {
+  background: var(--dark-hover-color);
+  border-color: var(--dark-border-color-hover);
+}
+
+.dark-mode .feature-title {
+  color: var(--dark-text-color);
+}
+
+.dark-mode .feature-description {
+  color: var(--dark-disabled-text);
+}
+
+/* Adjust floating elements for dark mode */
+.dark-mode .floating-element {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Update input styles for dark mode */
+.dark-mode .content-wrapper input {
+  background: var(--dark-card-background);
+  border-color: var(--dark-border-color);
+  color: var(--dark-text-color);
+}
+
+.dark-mode .content-wrapper input:focus {
+  border-color: #818cf8;
+  background: var(--dark-hover-color);  /* Instead of white */
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15);
+}
+
+.dark-mode .content-wrapper input::placeholder {
+  color: var(--dark-disabled-text);
+}
  

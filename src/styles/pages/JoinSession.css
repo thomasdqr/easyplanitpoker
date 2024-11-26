@@ -148,7 +148,7 @@ form input:focus {
 }
 
 .dark-mode .join-session-container {
-  background: linear-gradient(-45deg, #111827, #1f2937);
+  background: linear-gradient(-45deg, #0f172a, #1e293b);
 }
 
 .dark-mode .content-wrapper {
@@ -165,5 +165,25 @@ form input:focus {
 
 .dark-mode form input:focus {
   border-color: #818cf8;
-  box-shadow: 0 0 0 3px var(--dark-input-focus);
+  background: var(--dark-hover-color);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15);
+}
+
+.dark-mode form input::placeholder {
+  color: var(--dark-disabled-text);
+}
+
+.dark-mode .dot-1 {
+  background: #4f46e5;
+  opacity: 0.15;
+}
+
+.dark-mode .dot-2 {
+  background: #3730a3;
+  opacity: 0.15;
+}
+
+.dark-mode .dot-3 {
+  background: #6366f1;
+  opacity: 0.15;
 }

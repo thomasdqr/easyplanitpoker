@@ -310,7 +310,25 @@ export default function SessionPage() {
   }
 
   if (loading) {
-    return <div>Loading session...</div>;
+    return (
+      <div className="loading-container">
+        <div className="loading-wrapper">
+          <div className="loading-header" />
+          <div className="loading-content">
+            <div className="loading-right-panel">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="loading-participant" />
+              ))}
+            </div>
+            <div className="loading-left-panel">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="loading-story" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

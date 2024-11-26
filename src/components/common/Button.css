@@ -82,4 +82,21 @@
   .custom-button.sm .button-text {
     display: none;
   }
+}
+
+.dark-mode .custom-button.secondary {
+  background: var(--dark-card-background);
+  color: var(--dark-text-color);
+  border-color: var(--dark-border-color);
+}
+
+.dark-mode .custom-button.secondary:hover:not(:disabled) {
+  background: var(--dark-hover-color);
+  border-color: var(--dark-border-color-hover);
+}
+
+.dark-mode .custom-button:disabled {
+  background: var(--dark-disabled-background);
+  color: var(--dark-disabled-text);
+  border-color: var(--dark-border-color);
 } 

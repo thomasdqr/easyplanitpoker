@@ -146,3 +146,24 @@ form input:focus {
     transform: translateY(0);
   }
 }
+
+.dark-mode .join-session-container {
+  background: linear-gradient(-45deg, #111827, #1f2937);
+}
+
+.dark-mode .content-wrapper {
+  background: var(--dark-card-background);
+  border-color: var(--dark-border-color);
+  box-shadow: var(--dark-card-shadow);
+}
+
+.dark-mode form input {
+  background: var(--dark-card-background);
+  color: var(--dark-text-color);
+  border-color: var(--dark-border-color);
+}
+
+.dark-mode form input:focus {
+  border-color: #818cf8;
+  box-shadow: 0 0 0 3px var(--dark-input-focus);
+}

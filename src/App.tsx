@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Home from './pages/Home';
 import SessionPage from './pages/Session';
 import JoinSession from './pages/JoinSession';
+import ThemeToggle from './components/common/ThemeToggle';
 import './styles/App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/session/:sessionId/join" element={<JoinSession />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <ThemeToggle />
     </Router>
   );
 }

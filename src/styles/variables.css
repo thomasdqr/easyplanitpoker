@@ -1,5 +1,5 @@
 :root {
-  /* Colors */
+  /* Light Mode Colors */
   --background-color: #fafafa;
   --card-background: #ffffff;
   --text-color: #1f2937;
@@ -14,6 +14,18 @@
   --success-text: #16a34a;
   --disabled-background: #e2e8f0;
   --disabled-text: #64748b;
+  
+  /* Dark Mode Colors */
+  --dark-background-color: #111827;
+  --dark-card-background: #1f2937;
+  --dark-text-color: #f3f4f6;
+  --dark-border-color: #374151;
+  --dark-border-color-hover: #4b5563;
+  --dark-hover-color: #1f2937;
+  --dark-disabled-background: #374151;
+  --dark-disabled-text: #9ca3af;
+  --dark-success-background: #064e3b;
+  --dark-success-border: #059669;
   
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -38,4 +50,27 @@
   
   /* Typography */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  
+  /* Dark Mode Colors - Additional */
+  --dark-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  --dark-input-focus: rgba(129, 140, 248, 0.2);
+  --dark-overlay: rgba(0, 0, 0, 0.8);
+}
+
+/* Dark Mode Class */
+.dark-mode {
+  --background-color: var(--dark-background-color);
+  --card-background: var(--dark-card-background);
+  --text-color: var(--dark-text-color);
+  --border-color: var(--dark-border-color);
+  --border-color-hover: var(--dark-border-color-hover);
+  --hover-color: var(--dark-hover-color);
+  --disabled-background: var(--dark-disabled-background);
+  --disabled-text: var(--dark-disabled-text);
+  --success-background: var(--dark-success-background);
+  --success-border: var(--dark-success-border);
+  
+  /* Override shadows for dark mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: var(--dark-card-shadow);
 } 

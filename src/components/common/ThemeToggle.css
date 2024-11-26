@@ -1,0 +1,18 @@
+.theme-toggle {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark-mode .theme-toggle {
+  background: rgba(31, 41, 55, 0.8) !important;
+}
+
+@media (max-width: 640px) {
+  .theme-toggle .button-text {
+    display: none;
+  }
+} 

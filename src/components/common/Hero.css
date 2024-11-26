@@ -136,4 +136,23 @@
     background-position: 0% 50%;
     filter: hue-rotate(0deg);
   }
+}
+
+.dark-mode .dot-1 {
+  background: #4f46e5;
+  opacity: 0.15;
+}
+
+.dark-mode .dot-2 {
+  background: #3730a3;
+  opacity: 0.15;
+}
+
+.dark-mode .dot-3 {
+  background: #6366f1;
+  opacity: 0.15;
+}
+
+.dark-mode .hero-subtitle {
+  color: #9ca3af;
 } 

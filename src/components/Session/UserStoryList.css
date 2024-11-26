@@ -92,11 +92,20 @@
   flex: 1;
   min-width: 0;
   display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.story-title-container {
+  display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  min-width: 0;
 }
 
 .story-title {
+  flex: 1;
+  min-width: 0;
   font-weight: 600;
   font-size: 1rem;
   margin: 0;
@@ -183,4 +192,38 @@
 
 .story-card:hover .delete-story-button {
   /* Remove this rule */
+}
+
+.story-link-button {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  padding: 2px;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.story-link-button:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  opacity: 1;
+}
+
+.selected .story-link-button {
+  color: white;
+  opacity: 0.8;
+}
+
+.selected .story-link-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 1;
 } 

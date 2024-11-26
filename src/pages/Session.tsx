@@ -65,11 +65,37 @@ export default function SessionPage() {
     if (!sessionId || !currentParticipant?.isPM || !session || !newStoryTitle.trim()) return;
 
     try {
+      // Extract JIRA link if title contains URL
+      const urlMatch = newStoryTitle.match(/https?:\/\/[^\s]+/);
+      const link = urlMatch ? urlMatch[0] : undefined;
+      
+      // Extract title from URL or use provided title
+      let title = newStoryTitle.trim();
+      if (link) {
+        // Remove the link from the manual title
+        title = title.replace(link, '').trim();
+        
+        // Extract story name from JIRA URL
+        const urlParts = link.split('/');
+        const lastPart = urlParts[urlParts.length - 1];
+        
+        // If we found a URL slug, use it as title, otherwise keep manual title
+        if (lastPart && lastPart.length > 0) {
+          title = lastPart; // Use the exact name from URL without transformation
+        }
+        
+        // Fallback if no title could be extracted
+        if (!title) {
+          title = 'Untitled Story';
+        }
+      }
+
       const newStory: UserStory = {
         id: crypto.randomUUID(),
-        title: newStoryTitle.trim(),
+        title,
+        ...(link && { link }),
         votes: {},
-        status: 'pending'
+        status: 'pending' as const,
       };
 
       const updates: Partial<Session> = {
@@ -81,7 +107,6 @@ export default function SessionPage() {
         updates.currentStoryId = newStory.id;
       }
 
-      // Single update for both changes if needed
       await updateDoc(doc(db, 'sessions', sessionId), updates);
       setNewStoryTitle(''); // Clear input after successful add
     } catch (error) {
@@ -117,12 +142,8 @@ export default function SessionPage() {
     if (!sessionId || !session?.currentStoryId || !participantId || session.isVotingRevealed) return;
 
     try {
-      const numericValue = typeof value === 'string' ? -1 : value;
+      const numericValue = value === '?' ? -1 : Number(value);
       
-      // Only update if the vote has changed
-      const currentVote = session.participants.find(p => p.id === participantId)?.currentVote;
-      if (currentVote === numericValue) return;
-
       const updatedParticipants = session.participants.map(p => 
         p.id === participantId ? { ...p, currentVote: numericValue } : p
       );
@@ -151,7 +172,7 @@ export default function SessionPage() {
         ? Math.round(votes.reduce((a, b) => a + b, 0) / votes.length) 
         : 0;
 
-      // Batch update story and voting state
+      // Update story with votes and average
       const updatedStories = session.stories.map(s => 
         s.id === currentStory.id 
           ? { 
@@ -166,7 +187,6 @@ export default function SessionPage() {
           : s
       );
 
-      // Single update for both stories and voting state
       await updateDoc(doc(db, 'sessions', sessionId), {
         stories: updatedStories,
         isVotingRevealed: true
@@ -353,7 +373,6 @@ export default function SessionPage() {
                   stories={session!.stories}
                   currentStoryId={session!.currentStoryId || undefined}
                   isPM={currentParticipant?.isPM || false}
-                  onAddStory={handleAddStory}
                   onSelectStory={handleSelectStory}
                   onDeleteStory={handleDeleteStory}
                 />

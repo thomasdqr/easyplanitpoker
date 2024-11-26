@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { UserStory } from '../../types';
 import './UserStoryList.css';
 
@@ -8,7 +9,6 @@ interface Props {
   stories: UserStory[];
   currentStoryId?: string;
   isPM: boolean;
-  onAddStory: (story: Omit<UserStory, 'id'>) => void;
   onSelectStory: (storyId: string) => void;
   onDeleteStory: (storyId: string) => void;
 }
@@ -17,28 +17,25 @@ export default function UserStoryList({
   stories, 
   currentStoryId, 
   isPM, 
-  onAddStory, 
   onSelectStory,
   onDeleteStory 
 }: Props) {
-  const [newStoryTitle, setNewStoryTitle] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newStoryTitle.trim()) return;
-
-    onAddStory({
-      title: newStoryTitle.trim(),
-      status: 'pending',
-      votes: {},
-    });
-
-    setNewStoryTitle('');
-  };
-
   const handleDelete = (e: React.MouseEvent, storyId: string) => {
     e.stopPropagation(); // Prevent story selection when clicking delete
     onDeleteStory(storyId);
+  };
+
+  const handleClick = (story: UserStory) => {
+    if (isPM) {
+      onSelectStory(story.id);
+    }
+  };
+
+  const handleLinkClick = (e: React.MouseEvent, link?: string) => {
+    e.stopPropagation(); // Prevent story selection
+    if (link) {
+      window.open(link, '_blank');
+    }
   };
 
   // If no stories, show empty state message
@@ -61,10 +58,21 @@ export default function UserStoryList({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            onClick={() => isPM && onSelectStory(story.id)}
+            onClick={() => handleClick(story)}
           >
             <div className="story-content">
-              <h3 className="story-title">{story.title}</h3>
+              <div className="story-title-container">
+                <h3 className="story-title">{story.title}</h3>
+                {story.link && (
+                  <button 
+                    className="story-link-button"
+                    onClick={(e) => handleLinkClick(e, story.link)}
+                    title="Open in new tab"
+                  >
+                    <OpenInNewIcon fontSize="small" />
+                  </button>
+                )}
+              </div>
               {story.averagePoints !== undefined && (
                 <div className="story-points">
                   {story.averagePoints} points

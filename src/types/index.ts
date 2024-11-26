@@ -1,6 +1,7 @@
 export interface UserStory {
   id: string;
   title: string;
+  link?: string;
   votes: Record<string, number>;
   status: 'pending' | 'voting' | 'completed';
   averagePoints?: number;
@@ -22,5 +23,5 @@ export interface Session {
   participants: Participant[];
   currentStoryId: string | null;
   isVotingRevealed: boolean;
-  createdAt: number;
+  createdAt?: number;
 } 

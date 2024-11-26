@@ -30,7 +30,7 @@
 .story-content {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
   flex: 1;
   min-width: 0;
 }
@@ -87,8 +87,8 @@
 .story-actions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
-  margin-left: var(--spacing-lg);
+  gap: var(--spacing-sm);
+  margin-left: var(--spacing-sm);
 }
 
 .story-actions button {

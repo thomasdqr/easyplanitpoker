@@ -30,7 +30,7 @@
 .story-content {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
   flex: 1;
   min-width: 0;
 }
@@ -87,8 +87,8 @@
 .story-actions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
-  margin-left: var(--spacing-xs);
+  gap: var(--spacing-lg);
+  margin-left: var(--spacing-lg);
 }
 
 .story-actions button {
@@ -118,11 +118,6 @@
 
 .selected .story-actions button:hover {
   background: rgba(255, 255, 255, 0.2);
-}
-
-.link-button, .delete-button {
-  width: 32px;
-  height: 32px;
 }
 
 .user-story-list.empty {

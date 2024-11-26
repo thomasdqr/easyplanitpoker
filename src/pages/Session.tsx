@@ -12,6 +12,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import AddIcon from '@mui/icons-material/Add';
+import Button from '../components/common/Button';
 
 export default function SessionPage() {
   const { sessionId } = useParams();
@@ -294,21 +295,14 @@ export default function SessionPage() {
             <span className="session-link">
               {window.location.href.slice(0, 40)}...
             </span>
-            <button 
-              className={`copy-link-button ${copied ? 'copied' : ''}`}
+            <Button 
+              size="md"
+              variant={copied ? 'success' : 'secondary'}
+              icon={copied ? undefined : <ContentCopyIcon fontSize="small" />}
               onClick={handleCopyLink}
             >
-              {copied ? (
-                <>
-                  <span>✓ Copied!</span>
-                </>
-              ) : (
-                <>
-                  <ContentCopyIcon fontSize="small" />
-                  <span>Copy Link</span>
-                </>
-              )}
-            </button>
+              {copied ? '✓ Copied!' : 'Copy Link'}
+            </Button>
           </div>
         </header>
 
@@ -321,8 +315,11 @@ export default function SessionPage() {
                 isVotingRevealed={session!.isVotingRevealed}
               />
               {currentParticipant?.isPM && (
-                <button 
-                  className="reveal-votes-button"
+                <Button 
+                  size="md"
+                  variant="primary"
+                  fullWidth
+                  icon={session!.isVotingRevealed ? <NavigateNextIcon /> : <VisibilityIcon />}
                   onClick={session!.isVotingRevealed ? handleNextStory : handleRevealVotes}
                   disabled={
                     session!.isVotingRevealed 
@@ -332,18 +329,8 @@ export default function SessionPage() {
                       : !canRevealVotes
                   }
                 >
-                  {session!.isVotingRevealed ? (
-                    <>
-                      <NavigateNextIcon />
-                      <span>Next Story</span>
-                    </>
-                  ) : (
-                    <>
-                      <VisibilityIcon />
-                      <span>Reveal Votes</span>
-                    </>
-                  )}
-                </button>
+                  {session!.isVotingRevealed ? 'NEXT STORY' : 'REVEAL VOTES'}
+                </Button>
               )}
             </section>
           </div>
@@ -361,10 +348,14 @@ export default function SessionPage() {
                       placeholder="Add a new user story"
                       required
                     />
-                    <button type="submit">
-                      <AddIcon fontSize="small" />
-                      <span>Add Story</span>
-                    </button>
+                    <Button 
+                      type="submit"
+                      size="md"
+                      variant="primary"
+                      icon={<AddIcon fontSize="small" />}
+                    >
+                      Add Story
+                    </Button>
                   </form>
                 )}
               </div>

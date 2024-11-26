@@ -346,7 +346,7 @@
 
 .add-story-form input {
   flex: 1;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   font-size: 1rem;

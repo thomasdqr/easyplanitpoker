@@ -19,7 +19,6 @@ export default function UserStoryList({
   stories, 
   currentStoryId, 
   isPM, 
-  sessionId, 
   onSelectStory, 
   onDeleteStory 
 }: Props) {

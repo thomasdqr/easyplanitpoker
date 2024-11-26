@@ -10,7 +10,7 @@ export default function Hero() {
       </div>
       
       <div className="hero-section">
-        <h1 className="hero-title">Easy Planning Poker</h1>
+        <h1 className="hero-title">Simple Poker Planning</h1>
         <p className="hero-subtitle">
         Never Any Stress, Seamlessly Integrated Management. Plan smarter, execute faster.
         </p>

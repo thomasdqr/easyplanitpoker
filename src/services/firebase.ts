@@ -4,14 +4,13 @@ import { Session, Participant } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCcGWH637uwJ_XgLIgLsR8UPVOTnClOir4",
-  authDomain: "easypokerplaning.firebaseapp.com",
-  projectId: "easypokerplaning",
-  storageBucket: "easypokerplaning.firebasestorage.app",
-  messagingSenderId: "443448604604",
-  appId: "1:443448604604:web:971b99cac843a67faa5db9"
+  apiKey: "AIzaSyAC7i1ZCM1I6GCGTca12GKhP_mTogRS30c",
+  authDomain: "simplepokerplanning.firebaseapp.com",
+  projectId: "simplepokerplanning",
+  storageBucket: "simplepokerplanning.firebasestorage.app",
+  messagingSenderId: "349015261368",
+  appId: "1:349015261368:web:7cdcbf9a744c2d289c344d"
 };
-
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 

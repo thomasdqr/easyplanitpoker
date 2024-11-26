@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { createSession } from '../services/firebase';
 import '../styles/pages/Home.css';
 import Hero from '../components/common/Hero';
@@ -8,17 +7,15 @@ import Hero from '../components/common/Hero';
 export default function Home() {
   const [pmName, setPmName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e;
-      setMousePosition({ x: clientX, y: clientY });
 
       // Update each dot's position based on distance from cursor
-      dotsRef.current.forEach((dot, index) => {
+      dotsRef.current.forEach((dot) => {
         if (!dot) return;
 
         const rect = dot.getBoundingClientRect();
@@ -72,7 +69,7 @@ export default function Home() {
       
       <div className="content-wrapper">
         <h1>Create New Session</h1>
-        <p className="subtitle">Enter your name to create a new planning poker session</p>
+        <p className="subtitle">As the Product Manager, enter your name to create a new planning poker session</p>
         <form onSubmit={handleCreateSession}>
           <input
             type="text"

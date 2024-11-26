@@ -6,7 +6,7 @@ import { db } from '../services/firebase';
 import VotingCards from '../components/Session/VotingCards';
 import UserStoryList from '../components/Session/UserStoryList';
 import ParticipantList from '../components/Session/ParticipantList';
-import type { UserStory, Participant, Session } from '../types';
+import type { Session } from '../types';
 import '../styles/pages/Session.css';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -26,9 +26,7 @@ export default function SessionPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
-  const [participantId, setParticipantId] = useState<string | null>(
-    location.state?.participantId || null
-  );
+  const participantId = location.state?.participantId || null;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -373,7 +371,7 @@ export default function SessionPage() {
             >
               Back
             </Button>
-            <h1>Easy Poker Planning</h1>
+            <h1>Simple Poker Planning</h1>
           </div>
           <div className="copy-link-container">
             <div className="invite-section">
@@ -413,7 +411,7 @@ export default function SessionPage() {
                   onClick={session!.isVotingRevealed ? handleNextStory : handleRevealVotes}
                   disabled={
                     session!.isVotingRevealed 
-                      ? !session!.stories.find((s, i) => 
+                      ? !session!.stories.find((_, i) => 
                           i > session!.stories.findIndex(story => story.id === session!.currentStoryId)
                         )
                       : !canRevealVotes

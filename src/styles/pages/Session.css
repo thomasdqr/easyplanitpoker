@@ -358,11 +358,13 @@
   padding: var(--spacing-sm);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  font-size: 1rem;
+  font-size: 1.1rem;
   background: var(--card-background);
   color: var(--text-color);
   transition: all var(--transition-fast);
   min-width: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+    'Helvetica Neue', Arial, sans-serif;
 }
 
 .add-story-form input:focus {

@@ -33,6 +33,9 @@ export default function ParticipantList({
               <span className="participant-name">
                 {participant.name}
                 {participant.isPM && <span className="pm-badge">PM</span>}
+                {participant.id === currentParticipantId && (
+                  <span className="you-badge">YOU</span>
+                )}
               </span>
               {isPM && !participant.isPM && participant.id !== currentParticipantId && (
                 <button 

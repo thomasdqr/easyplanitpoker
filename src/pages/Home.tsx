@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { createSession } from '../services/firebase';
 import '../styles/pages/Home.css';
+import Hero from '../components/common/Hero';
 
 export default function Home() {
   const [pmName, setPmName] = useState('');
@@ -67,23 +68,8 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <div className="background-dots">
-        {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            ref={el => dotsRef.current[i] = el}
-            className={`dot dot-${i + 1}`}
-          />
-        ))}
-      </div>
+      <Hero />
       
-      <div className="hero-section">
-        <h1 className="hero-title">Easy Planning Poker</h1>
-        <p className="hero-subtitle">
-          Streamline your agile estimation process with our intuitive and collaborative planning poker tool
-        </p>
-      </div>
-
       <motion.div 
         className="content-wrapper"
         initial={{ opacity: 0, y: 20 }}

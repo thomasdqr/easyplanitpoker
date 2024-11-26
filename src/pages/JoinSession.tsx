@@ -6,6 +6,7 @@ import { db } from '../services/firebase';
 import { Session, Participant } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import Button from '../components/common/Button';
+import Hero from '../components/common/Hero';
 import '../styles/pages/JoinSession.css';
 
 export default function JoinSession() {
@@ -55,19 +56,8 @@ export default function JoinSession() {
 
   return (
     <div className="join-container">
-      <div className="background-dots">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className={`dot dot-${i + 1}`} />
-        ))}
-      </div>
+      <Hero />
       
-      <div className="hero-section">
-        <h1 className="hero-title">Easy Planning Poker</h1>
-        <p className="hero-subtitle">
-          Streamline your agile estimation process with our intuitive and collaborative planning poker tool
-        </p>
-      </div>
-
       <motion.div 
         className="content-wrapper"
         initial={{ opacity: 0, y: 20 }}

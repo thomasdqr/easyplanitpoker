@@ -339,6 +339,7 @@
 
 .add-story-form {
   display: flex;
+  flex-direction: row;
   gap: var(--spacing-md);
   flex: 1;
   min-width: 0;

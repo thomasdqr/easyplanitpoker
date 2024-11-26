@@ -10,11 +10,19 @@ interface Props {
   stories: UserStory[];
   currentStoryId?: string;
   isPM: boolean;
+  sessionId: string;
   onSelectStory: (storyId: string) => void;
   onDeleteStory: (storyId: string) => void;
 }
 
-export default function UserStoryList({ stories, currentStoryId, isPM, onSelectStory, onDeleteStory }: Props) {
+export default function UserStoryList({ 
+  stories, 
+  currentStoryId, 
+  isPM, 
+  sessionId, 
+  onSelectStory, 
+  onDeleteStory 
+}: Props) {
   const [selectedStoryUrl, setSelectedStoryUrl] = useState<string | null>(null);
 
   const handleDelete = (e: React.MouseEvent, storyId: string) => {

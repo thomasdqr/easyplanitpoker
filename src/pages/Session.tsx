@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { doc, onSnapshot, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, getDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import VotingCards from '../components/Session/VotingCards';
 import UserStoryList from '../components/Session/UserStoryList';
@@ -13,6 +13,12 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '../components/common/Button';
+
+function extractJiraLinks(input: string): string[] {
+  const jiraLinkRegex = /https?:\/\/[^\/]+\/browse\/[A-Z]+-\d+/g;
+  const matches = input.match(jiraLinkRegex);
+  return matches ? Array.from(new Set(matches)) : [];
+}
 
 export default function SessionPage() {
   const { sessionId } = useParams();
@@ -26,6 +32,7 @@ export default function SessionPage() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [newStoryTitle, setNewStoryTitle] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const currentParticipant = session?.participants.find(p => p.id === participantId);
 
@@ -60,60 +67,6 @@ export default function SessionPage() {
       navigate(`/session/${sessionId}/join`);
     }
   }, [participantId, sessionId, loading, navigate]);
-
-  const handleAddStory = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!sessionId || !currentParticipant?.isPM || !session || !newStoryTitle.trim()) return;
-
-    try {
-      // Extract JIRA link if title contains URL
-      const urlMatch = newStoryTitle.match(/https?:\/\/[^\s]+/);
-      const link = urlMatch ? urlMatch[0] : undefined;
-      
-      // Extract title from URL or use provided title
-      let title = newStoryTitle.trim();
-      if (link) {
-        // Remove the link from the manual title
-        title = title.replace(link, '').trim();
-        
-        // Extract story name from JIRA URL
-        const urlParts = link.split('/');
-        const lastPart = urlParts[urlParts.length - 1];
-        
-        // If we found a URL slug, use it as title, otherwise keep manual title
-        if (lastPart && lastPart.length > 0) {
-          title = lastPart; // Use the exact name from URL without transformation
-        }
-        
-        // Fallback if no title could be extracted
-        if (!title) {
-          title = 'Untitled Story';
-        }
-      }
-
-      const newStory: UserStory = {
-        id: crypto.randomUUID(),
-        title,
-        ...(link && { link }),
-        votes: {},
-        status: 'pending' as const,
-      };
-
-      const updates: Partial<Session> = {
-        stories: [...session.stories, newStory]
-      };
-
-      // If no current story is selected, set this as current
-      if (!session.currentStoryId) {
-        updates.currentStoryId = newStory.id;
-      }
-
-      await updateDoc(doc(db, 'sessions', sessionId), updates);
-      setNewStoryTitle(''); // Clear input after successful add
-    } catch (error) {
-      console.error('Error adding story:', error);
-    }
-  };
 
   const handleSelectStory = async (storyId: string) => {
     if (!sessionId || !currentParticipant?.isPM || !session) return;
@@ -267,6 +220,69 @@ export default function SessionPage() {
     }
   };
 
+  const handleAddStory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sessionId || !currentParticipant?.isPM || !session || !newStoryTitle.trim() || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const jiraLinks = extractJiraLinks(newStoryTitle);
+      console.log('Extracted JIRA links:', jiraLinks);
+      
+      const sessionRef = doc(db, 'sessions', sessionId);
+      
+      if (jiraLinks.length > 0) {
+        // Get current session data
+        const sessionSnap = await getDoc(sessionRef);
+        if (!sessionSnap.exists()) throw new Error('Session not found');
+        
+        const sessionData = sessionSnap.data();
+        console.log('Current stories:', sessionData.stories);
+        
+        const currentStories = sessionData.stories || [];
+
+        // Create new stories for each JIRA link
+        const newStories = jiraLinks.map(link => ({
+          id: crypto.randomUUID(),
+          title: link.split('/').pop() || 'Untitled Story',
+          link,
+          votes: {},
+          status: 'pending' as const
+        }));
+        
+        console.log('New stories to be added:', newStories);
+
+        // Update with all new stories at once
+        const updatedStories = [...currentStories, ...newStories];
+        console.log('Final stories array:', updatedStories);
+        
+        await updateDoc(sessionRef, {
+          stories: updatedStories
+        });
+        
+        console.log('Update completed successfully');
+      } else {
+        console.log('No JIRA links found, creating single story');
+        const storyData = {
+          id: crypto.randomUUID(),
+          title: newStoryTitle,
+          votes: {},
+          status: 'pending' as const
+        };
+        
+        await updateDoc(sessionRef, {
+          stories: arrayUnion(storyData)
+        });
+      }
+      
+      setNewStoryTitle('');
+    } catch (error) {
+      console.error('Error adding story:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (error) {
     return (
       <div className="error-container">
@@ -345,14 +361,15 @@ export default function SessionPage() {
                       type="text"
                       value={newStoryTitle}
                       onChange={(e) => setNewStoryTitle(e.target.value)}
-                      placeholder="Add a new user story"
-                      required
+                      placeholder="Add a new story or paste Notion content..."
+                      disabled={isSubmitting}
                     />
                     <Button 
                       type="submit"
                       size="md"
                       variant="primary"
                       icon={<AddIcon fontSize="small" />}
+                      disabled={!newStoryTitle.trim() || isSubmitting}
                     >
                       Add Story
                     </Button>
@@ -364,6 +381,7 @@ export default function SessionPage() {
                   stories={session!.stories}
                   currentStoryId={session!.currentStoryId || undefined}
                   isPM={currentParticipant?.isPM || false}
+                  sessionId={session!.id}
                   onSelectStory={handleSelectStory}
                   onDeleteStory={handleDeleteStory}
                 />

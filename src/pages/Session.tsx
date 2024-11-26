@@ -13,6 +13,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '../components/common/Button';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function extractJiraLinks(input: string): string[] {
   const jiraLinkRegex = /https?:\/\/[^\/]+\/browse\/[A-Z]+-\d+/g;
@@ -340,7 +341,17 @@ export default function SessionPage() {
     >
       <div className="session-wrapper">
         <header className="session-header">
-          <h1>Easy Poker Planning</h1>
+          <div className="header-left">
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<ArrowBackIcon />}
+              onClick={() => navigate('/')}
+            >
+              Back
+            </Button>
+            <h1>Easy Poker Planning</h1>
+          </div>
           <div className="copy-link-container">
             <div className="invite-section">
               <h2 className="invite-label">Invite participants</h2>

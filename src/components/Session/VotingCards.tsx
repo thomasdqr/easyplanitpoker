@@ -10,12 +10,18 @@ interface Props {
 }
 
 export default function VotingCards({ onVote, selectedValue, disabled }: Props) {
+  const isSelected = (value: number | string) => {
+    if (selectedValue === null || selectedValue === undefined) return false;
+    if (selectedValue === -1 && value === '?') return true;
+    return selectedValue === value;
+  };
+
   return (
     <div className="voting-cards">
       {VOTING_VALUES.map((value) => (
         <motion.div
           key={value}
-          className={`card ${selectedValue === value ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
+          className={`card ${isSelected(value) ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
           whileHover={{ scale: 1.05 }}
           whileTap={disabled ? undefined : { backgroundColor: 'rgba(129, 140, 248, 0.25)' }}
           onClick={() => !disabled && onVote(value)}

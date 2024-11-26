@@ -61,7 +61,9 @@ export default function UserStoryList({ stories, currentStoryId, isPM, onSelectS
                 {story.averagePoints !== undefined && (
                   <span className="story-points">{story.averagePoints} points</span>
                 )}
-                <span className="story-status">{story.status}</span>
+                <span className="story-status" data-status={story.status}>
+                  {story.status}
+                </span>
               </div>
               <div className="story-actions">
                 {story.link && (

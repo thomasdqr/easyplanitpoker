@@ -374,12 +374,10 @@ export default function SessionPage() {
             <h1>Simple Poker Planning</h1>
           </div>
           <div className="copy-link-container">
-            <div className="invite-section">
-              <h2 className="invite-label">Invite participants</h2>
-              <span className="session-link">
-                {window.location.href.slice(0, 40)}...
-              </span>
-            </div>
+            <h2 className="invite-label">Invite participants</h2>
+            <span className="session-link">
+              {window.location.href.slice(0, 40)}...
+            </span>
             <Button 
               size="md"
               variant={copied ? 'success' : 'secondary'}

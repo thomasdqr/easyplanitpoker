@@ -1,8 +1,7 @@
 .voting-cards {
   display: flex;
   gap: var(--spacing-md);
-  justify-content: center;
-  padding: var(--spacing-md);
+  justify-content: space-between;
 }
 
 .card {

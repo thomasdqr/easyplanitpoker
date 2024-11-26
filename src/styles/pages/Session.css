@@ -10,8 +10,8 @@
 }
 
 .session-wrapper {
+  width: calc(100% - var(--spacing-xl) * 2);
   max-width: 1400px;
-  width: 100%;
   height: calc(100vh - var(--spacing-xl) * 2);
   margin: 0 auto;
   padding: 0 var(--spacing-xl);

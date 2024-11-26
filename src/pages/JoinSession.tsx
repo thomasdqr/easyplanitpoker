@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { motion } from 'framer-motion';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import { Session, Participant } from '../types';
 import { v4 as uuidv4 } from 'uuid';
-import type { Session } from '../types';
+import Button from '../components/common/Button';
+import '../styles/pages/JoinSession.css';
 
 export default function JoinSession() {
   const { sessionId } = useParams();
@@ -30,17 +33,16 @@ export default function JoinSession() {
       const sessionData = sessionSnap.data() as Session;
       const newParticipantId = uuidv4();
 
+      const newParticipant: Participant = {
+        id: newParticipantId,
+        name: name.trim(),
+        isPM: false,
+        currentVote: null,
+        connected: true
+      };
+
       await updateDoc(sessionRef, {
-        participants: [
-          ...sessionData.participants,
-          {
-            id: newParticipantId,
-            name: name.trim(),
-            isPM: false,
-            currentVote: null,
-            connected: true
-          }
-        ]
+        participants: [...sessionData.participants, newParticipant]
       });
 
       navigate(`/session/${sessionId}`, { state: { participantId: newParticipantId } });
@@ -52,15 +54,32 @@ export default function JoinSession() {
   };
 
   return (
-    <div className="join-session-container">
+    <div className="join-container">
       <div className="background-dots">
-        <div className="dot dot-1" />
-        <div className="dot dot-2" />
-        <div className="dot dot-3" />
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className={`dot dot-${i + 1}`} />
+        ))}
       </div>
-      <div className="join-dialog">
-        <h2>Join Session</h2>
-        {error && <div className="error-message">{error}</div>}
+      
+      <div className="hero-section">
+        <h1 className="hero-title">Easy Planning Poker</h1>
+        <p className="hero-subtitle">
+          Streamline your agile estimation process with our intuitive and collaborative planning poker tool
+        </p>
+      </div>
+
+      <motion.div 
+        className="content-wrapper"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <h1>Join a Session</h1>
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
         <form onSubmit={handleJoin}>
           <input
             type="text"
@@ -70,11 +89,17 @@ export default function JoinSession() {
             required
             disabled={loading}
           />
-          <button type="submit" disabled={loading}>
-            {loading ? 'Joining...' : 'Join Session'}
-          </button>
+          <Button 
+            type="submit"
+            size="lg"
+            variant="primary"
+            fullWidth
+            disabled={loading}
+          >
+            {loading ? 'Joining Session...' : 'Join Session'}
+          </Button>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 } 

@@ -1,134 +1,180 @@
-.join-session-container {
-  height: 100vh;
+.join-container {
+  min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl);
   background: #f8f9ff;
   position: relative;
   overflow: hidden;
 }
 
-.join-dialog {
-  background: white;
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-xl);
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-xl);
   position: relative;
   z-index: 2;
-  animation: fadeInUp 0.8s ease forwards;
 }
 
-.join-dialog h2 {
-  font-size: 2rem;
-  font-weight: 800;
-  background: linear-gradient(45deg, #4f46e5, #6366f1, #818cf8);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin: 0 0 var(--spacing-xl) 0;
+.hero-title {
   text-align: center;
+  font-size: 4.5rem;
+  font-weight: 800;
+  background: linear-gradient(
+    45deg,
+    #4f46e5,
+    #6366f1,
+    #818cf8,
+    #c084fc,
+    #8b5cf6,
+    #6366f1,
+    #4f46e5
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: 
+    fadeInUp 0.8s ease forwards,
+    titleGradient 5s ease-in-out infinite;
 }
 
-.join-dialog form {
+.hero-subtitle {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #6b7280;
+  margin-bottom: var(--spacing-xl);
+  max-width: 600px;
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards 0.2s;
+}
+
+.content-wrapper {
+  width: 100%;
+  max-width: 440px;
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  position: relative;
+  z-index: 2;
+}
+
+.content-wrapper h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: var(--spacing-lg);
+}
+
+form {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
 }
 
-.join-dialog input {
+form input {
   padding: var(--spacing-md);
-  background: #f9fafb;
-  border: 2px solid #e5e7eb;
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  color: #374151;
   font-size: 1rem;
-  transition: all 0.2s ease;
+  background: var(--card-background);
+  color: var(--text-color);
+  transition: all var(--transition-fast);
 }
 
-.join-dialog input:focus {
+form input:focus {
   outline: none;
   border-color: #818cf8;
-  background: white;
   box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
 }
 
-.join-dialog button {
-  padding: var(--spacing-md);
-  background: var(--accent-gradient);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.join-dialog button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  filter: brightness(1.05);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-}
-
 .error-message {
-  color: rgb(239, 68, 68);
-  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
   padding: var(--spacing-md);
   border-radius: var(--border-radius-md);
   margin-bottom: var(--spacing-md);
   text-align: center;
+  font-weight: 500;
 }
 
-/* Copy the background dots styles and animations from Home.css */
 .background-dots {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  overflow: hidden;
   pointer-events: none;
 }
 
 .dot {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.25;
-  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-  will-change: transform;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: float 8s ease-in-out infinite;
 }
 
 .dot-1 {
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   background: #818cf8;
-  top: -15%;
-  left: -15%;
-  animation: floatDot1 15s ease-in-out infinite;
+  top: -100px;
+  right: -100px;
+  animation-delay: 0s;
 }
 
 .dot-2 {
-  width: 400px;
-  height: 400px;
-  background: #6366f1;
-  top: 60%;
-  right: -10%;
-  animation: floatDot2 12s ease-in-out infinite;
+  width: 300px;
+  height: 300px;
+  background: #c084fc;
+  bottom: -50px;
+  left: -50px;
+  animation-delay: -2s;
 }
 
 .dot-3 {
-  width: 350px;
-  height: 350px;
-  background: #4f46e5;
-  bottom: -15%;
-  left: 30%;
-  animation: floatDot3 18s ease-in-out infinite;
+  width: 250px;
+  height: 250px;
+  background: #6366f1;
+  top: 50%;
+  right: 25%;
+  animation-delay: -4s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+}
+
+@keyframes titleGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes fadeInUp {

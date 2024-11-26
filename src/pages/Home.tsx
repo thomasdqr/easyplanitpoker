@@ -78,7 +78,7 @@ export default function Home() {
       </div>
       
       <div className="hero-section">
-        <h1 className="hero-title">Planning Poker</h1>
+        <h1 className="hero-title">Easy Planning Poker</h1>
         <p className="hero-subtitle">
           Streamline your agile estimation process with our intuitive and collaborative planning poker tool
         </p>

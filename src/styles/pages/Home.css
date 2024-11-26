@@ -63,13 +63,17 @@
 }
 
 .hero-section {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   margin-bottom: var(--spacing-xl);
   position: relative;
   z-index: 2;
 }
 
 .hero-title {
+  text-align: center;
   font-size: 4.5rem;
   font-weight: 800;
   background: linear-gradient(
@@ -95,6 +99,7 @@
 }
 
 .hero-subtitle {
+  text-align: center;
   font-size: 1.5rem;
   color: #6b7280;
   margin-bottom: var(--spacing-xl);

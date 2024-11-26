@@ -1,15 +1,15 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { Session, Participant } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCcGWH637uwJ_XgLIgLsR8UPVOTnClOir4",
-    authDomain: "easypokerplaning.firebaseapp.com",
-    projectId: "easypokerplaning",
-    storageBucket: "easypokerplaning.firebasestorage.app",
-    messagingSenderId: "443448604604",
-    appId: "1:443448604604:web:68ebc8ae8cf69ad9aa5db9"
+  apiKey: "AIzaSyCcGWH637uwJ_XgLIgLsR8UPVOTnClOir4",
+  authDomain: "easypokerplaning.firebaseapp.com",
+  projectId: "easypokerplaning",
+  storageBucket: "easypokerplaning.firebasestorage.app",
+  messagingSenderId: "443448604604",
+  appId: "1:443448604604:web:971b99cac843a67faa5db9"
 };
 
 const app = initializeApp(firebaseConfig);

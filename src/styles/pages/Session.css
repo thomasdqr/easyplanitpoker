@@ -46,9 +46,10 @@
   z-index: 2;
   min-height: 0;
   overflow: hidden;
+  flex-direction: row-reverse;
 }
 
-.left-panel {
+.right-panel {
   width: 300px;
   background: white;
   border-radius: var(--border-radius-lg);
@@ -62,7 +63,7 @@
   max-height: 100%;
 }
 
-.right-panel {
+.left-panel {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -75,30 +76,24 @@
 }
 
 .copy-link-container {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  background: white;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  height: 40px;
-  border: 1px solid var(--border-color);
 }
 
 .session-link {
-  background: var(--background-color);
+  font-size: 0.875rem;
   color: var(--text-color);
   opacity: 0.7;
+  background: var(--background-color);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--border-color);
-  font-family: var(--font-family);
-  font-size: 0.875rem;
-  user-select: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .copy-link-button {
@@ -401,5 +396,19 @@
 .participants-section h2 {
   margin-top: 0;
   margin-bottom: var(--spacing-lg);
+}
+
+.invite-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.invite-label {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+  white-space: nowrap;
 }
  

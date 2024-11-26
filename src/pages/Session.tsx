@@ -324,9 +324,12 @@ export default function SessionPage() {
         <header className="session-header">
           <h1>Easy Poker Planning</h1>
           <div className="copy-link-container">
-            <span className="session-link">
-              {window.location.href.slice(0, 40)}...
-            </span>
+            <div className="invite-section">
+              <h2 className="invite-label">Invite participants</h2>
+              <span className="session-link">
+                {window.location.href.slice(0, 40)}...
+              </span>
+            </div>
             <Button 
               size="md"
               variant={copied ? 'success' : 'secondary'}
@@ -339,7 +342,7 @@ export default function SessionPage() {
         </header>
 
         <div className="session-content">
-          <div className="left-panel">
+          <div className="right-panel">
             <section className="participants-section">
               <h2>Participants</h2>
               <ParticipantList
@@ -367,7 +370,7 @@ export default function SessionPage() {
             </section>
           </div>
 
-          <div className="right-panel">
+          <div className="left-panel">
             <section className="stories-section">
               <div className="stories-header">
                 <h2>User Stories</h2>
@@ -377,7 +380,7 @@ export default function SessionPage() {
                       type="text"
                       value={newStoryTitle}
                       onChange={(e) => setNewStoryTitle(e.target.value)}
-                      placeholder="Add a new story or paste Notion content..."
+                      placeholder="Add your story links or paste them from Notion here"
                       disabled={isSubmitting}
                     />
                     <Button 

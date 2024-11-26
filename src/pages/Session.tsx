@@ -289,7 +289,7 @@ export default function SessionPage() {
     >
       <div className="session-wrapper">
         <header className="session-header">
-          <h1>Planning Session</h1>
+          <h1>Easy Poker Planning</h1>
           <div className="copy-link-container">
             <span className="session-link">
               {window.location.href.slice(0, 40)}...

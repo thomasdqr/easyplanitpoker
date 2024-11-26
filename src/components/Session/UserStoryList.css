@@ -48,8 +48,8 @@
 
 .story-points {
   font-size: 0.85rem;
-  opacity: 0.8;
   white-space: nowrap;
+  padding: var(--spacing-xs) 0;
 }
 
 .story-status {
@@ -87,7 +87,8 @@
 .story-actions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
+  margin-left: var(--spacing-xs);
 }
 
 .story-actions button {
@@ -102,6 +103,8 @@
   color: inherit;
   opacity: 0.7;
   transition: all var(--transition-fast);
+  width: 32px;
+  height: 32px;
 }
 
 .story-actions button:hover {

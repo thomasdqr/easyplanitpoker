@@ -283,6 +283,22 @@ export default function SessionPage() {
     }
   };
 
+  const isNotionContent = (text: string): boolean => {
+    const jiraLinks = extractJiraLinks(text);
+    const hasMultipleLinks = jiraLinks.length > 1;
+    const hasNotionBullets = text.includes('- [ ]') || text.includes('- [x]');
+    
+    return hasMultipleLinks || hasNotionBullets;
+  };
+
+  const getImportButtonText = (text: string): string => {
+    const jiraLinks = extractJiraLinks(text);
+    if (jiraLinks.length > 1) {
+      return `Import ${jiraLinks.length} Stories`;
+    }
+    return 'Add Story';
+  };
+
   if (error) {
     return (
       <div className="error-container">
@@ -368,10 +384,13 @@ export default function SessionPage() {
                       type="submit"
                       size="md"
                       variant="primary"
-                      icon={<AddIcon fontSize="small" />}
+                      icon={isNotionContent(newStoryTitle) 
+                        ? <ContentCopyIcon fontSize="small" />
+                        : <AddIcon fontSize="small" />
+                      }
                       disabled={!newStoryTitle.trim() || isSubmitting}
                     >
-                      Add Story
+                      {getImportButtonText(newStoryTitle)}
                     </Button>
                   </form>
                 )}

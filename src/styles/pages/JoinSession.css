@@ -9,6 +9,7 @@
   background: linear-gradient(-45deg, #f8faff, #f0f4ff);
   position: relative;
   overflow: hidden;
+  gap: var(--spacing-xl)
 }
 
 .content-wrapper {

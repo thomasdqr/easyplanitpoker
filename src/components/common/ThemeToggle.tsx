@@ -16,7 +16,6 @@ export default function ThemeToggle() {
   }, []);
 
   const handleAnimationProgress = useCallback(() => {
-    // Set a timeout for 75% of the animation duration (1.2s * 0.75 = 0.9s)
     setTimeout(() => {
       const root = document.documentElement;
       if (isDarkMode) {
@@ -26,7 +25,7 @@ export default function ThemeToggle() {
         root.classList.remove('dark-mode');
         localStorage.setItem('theme', 'light');
       }
-    }, 500); // 0.5 seconds
+    }, 300);
   }, [isDarkMode]);
 
   useEffect(() => {
@@ -45,6 +44,14 @@ export default function ThemeToggle() {
       localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
     }
   }, [isDarkMode, isTransitioning]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      root.classList.add('dark-mode');
+    }
+  }, []);
 
   const toggleTheme = () => {
     setIsTransitioning(true);

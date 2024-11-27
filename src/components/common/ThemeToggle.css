@@ -4,11 +4,13 @@
   right: var(--spacing-lg);
   z-index: 100;
   backdrop-filter: blur(8px);
-  background: rgba(255, 255, 255, 1) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .dark-mode .theme-toggle {
-  background: rgba(31, 41, 55, 1) !important;
+  background: rgba(31, 41, 55, 0.9) !important;
 }
 
 @media (max-width: 640px) {
@@ -30,11 +32,15 @@
   justify-content: center;
   opacity: 0;
   visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  transition: visibility 0s linear 0.3s;
 }
 
 .theme-transition-overlay.active {
   opacity: 1;
   visibility: visible;
+  transition-delay: 0s;
 }
 
 .theme-transition-circle {
@@ -43,10 +49,13 @@
   height: 150px;
   border-radius: 50%;
   transform: scale(0);
+  will-change: transform, filter;
+  backface-visibility: hidden;
+  filter: blur(0);
 }
 
 .theme-transition-overlay.active .theme-transition-circle {
-  animation: circleExpand 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: circleExpand 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .to-dark .theme-transition-circle {
@@ -76,7 +85,10 @@
   height: 12px;
   border-radius: 50%;
   opacity: 0;
-  filter: blur(2px);
+  transform: translateZ(0);
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  filter: blur(1px);
 }
 
 .theme-transition-overlay.active .particle {
@@ -103,7 +115,7 @@
 
 @keyframes circleExpand {
   0% {
-    transform: scale(0);
+    transform: scale(0) translateZ(0);
     filter: blur(0);
     opacity: 0;
   }
@@ -116,12 +128,12 @@
   }
   75% {
     opacity: 1;
-    filter: blur(0px);
-    transform: scale(20);
+    filter: blur(40px);
+    transform: scale(20) translateZ(0);
   }
   100% {
-    transform: scale(25);
-    filter: blur(80px);
+    transform: scale(25) translateZ(0);
+    filter: blur(60px);
     opacity: 0;
   }
 }
@@ -129,18 +141,18 @@
 @keyframes particleFloat {
   0% {
     opacity: 0;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) translateZ(0) scale(1);
   }
   20% {
     opacity: 0.8;
-    transform: translateY(-100px) scale(1.8);
+    transform: translateY(-100px) translateZ(0) scale(1.8);
   }
   70% {
     opacity: 0.3;
-    transform: translateY(-250px) scale(1.2);
+    transform: translateY(-250px) translateZ(0) scale(1.2);
   }
   100% {
     opacity: 0;
-    transform: translateY(-300px) scale(0.5);
+    transform: translateY(-300px) translateZ(0) scale(0.5);
   }
 } 

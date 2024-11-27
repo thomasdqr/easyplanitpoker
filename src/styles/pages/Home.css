@@ -352,4 +352,16 @@
 .dark-mode .content-wrapper input::placeholder {
   color: var(--dark-disabled-text);
 }
+
+.hero-title::selection {
+  background: #818cf8;
+  -webkit-text-fill-color: white;
+  color: white;
+}
+
+.hero-title::-moz-selection {
+  background: #818cf8;
+  -webkit-text-fill-color: white;
+  color: white;
+}
  

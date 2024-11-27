@@ -53,6 +53,18 @@
     titleGradient 5s ease-in-out infinite;
 }
 
+.session-header h1::selection {
+  background: #818cf8;
+  -webkit-text-fill-color: white;
+  color: white;
+}
+
+.session-header h1::-moz-selection {
+  background: #818cf8;
+  -webkit-text-fill-color: white;
+  color: white;
+}
+
 .session-content {
   display: flex;
   gap: var(--spacing-xl);

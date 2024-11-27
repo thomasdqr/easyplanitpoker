@@ -59,7 +59,7 @@
 }
 
 .theme-transition-overlay.active .theme-transition-circle {
-  animation: circleExpand 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: circleExpand 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .to-dark .theme-transition-circle {
@@ -102,7 +102,7 @@
 }
 
 .theme-transition-overlay.active .particle {
-  animation: particleFloat 1.2s ease-out forwards;
+  animation: particleFloat 1.8s ease-out forwards;
 }
 
 .to-dark .particle {

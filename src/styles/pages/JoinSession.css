@@ -199,3 +199,15 @@ form input:focus {
   background: #6366f1;
   opacity: 0.15;
 }
+
+.content-wrapper h1::selection {
+  background: #818cf8;
+  -webkit-text-fill-color: white;
+  color: white;
+}
+
+.content-wrapper h1::-moz-selection {
+  background: #818cf8;
+  -webkit-text-fill-color: white;
+  color: white;
+}

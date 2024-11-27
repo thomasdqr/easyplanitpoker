@@ -25,7 +25,7 @@ export default function ThemeToggle() {
         root.classList.remove('dark-mode');
         localStorage.setItem('theme', 'light');
       }
-    }, 300);
+    }, 450);
   }, [isDarkMode]);
 
   useEffect(() => {

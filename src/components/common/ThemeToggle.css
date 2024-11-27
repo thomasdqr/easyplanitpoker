@@ -114,7 +114,7 @@
   30% {
     opacity: 1;
   }
-  60% {
+  75% {
     opacity: 1;
     filter: blur(0px);
     transform: scale(20);

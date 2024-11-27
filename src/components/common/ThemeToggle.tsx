@@ -16,7 +16,7 @@ export default function ThemeToggle() {
   }, []);
 
   const handleAnimationProgress = useCallback(() => {
-    // Set a timeout for 60% of the animation duration (1.2s * 0.6 = 0.72s)
+    // Set a timeout for 75% of the animation duration (1.2s * 0.75 = 0.9s)
     setTimeout(() => {
       const root = document.documentElement;
       if (isDarkMode) {
@@ -26,7 +26,7 @@ export default function ThemeToggle() {
         root.classList.remove('dark-mode');
         localStorage.setItem('theme', 'light');
       }
-    }, 720); // 0.72 seconds
+    }, 500); // 0.5 seconds
   }, [isDarkMode]);
 
   useEffect(() => {

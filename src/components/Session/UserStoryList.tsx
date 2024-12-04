@@ -85,7 +85,7 @@ export default function UserStoryList({
                 {story.link && (
                   <button 
                     className="story-action-button"
-                    onClick={() => handleStoryLinkClick(story.link)}
+                    onClick={() => story.link && handleStoryLinkClick(story.link)}
                     title="Open story details"
                   >
                     <LinkIcon />

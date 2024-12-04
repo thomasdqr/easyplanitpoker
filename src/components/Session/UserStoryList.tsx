@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserStory } from '../../types';
 import StoryIframeModal from './StoryIframeModal';
@@ -23,6 +23,12 @@ export default function UserStoryList({
   onDeleteStory 
 }: Props) {
   const [selectedStoryUrl, setSelectedStoryUrl] = useState<string | null>(null);
+  const [isFirefox, setIsFirefox] = useState(false);
+
+  useEffect(() => {
+    // Detect Firefox browser
+    setIsFirefox(navigator.userAgent.toLowerCase().includes('firefox'));
+  }, []);
 
   const handleDelete = (e: React.MouseEvent, storyId: string) => {
     e.stopPropagation();
@@ -35,10 +41,13 @@ export default function UserStoryList({
     }
   };
 
-  const handleLinkClick = (e: React.MouseEvent, link?: string) => {
-    e.stopPropagation();
-    if (link) {
-      setSelectedStoryUrl(link);
+  const handleStoryLinkClick = (url: string) => {
+    if (isFirefox) {
+      // Open in new tab for Firefox
+      window.open(url, '_blank');
+    } else {
+      // Show modal for other browsers
+      setSelectedStoryUrl(url);
     }
   };
 
@@ -75,10 +84,11 @@ export default function UserStoryList({
               <div className="story-actions">
                 {story.link && (
                   <button 
-                    className="link-button"
-                    onClick={(e) => handleLinkClick(e, story.link)}
+                    className="story-action-button"
+                    onClick={() => handleStoryLinkClick(story.link)}
+                    title="Open story details"
                   >
-                    <LinkIcon fontSize="small" />
+                    <LinkIcon />
                   </button>
                 )}
                 {isPM && (
@@ -95,7 +105,7 @@ export default function UserStoryList({
         </AnimatePresence>
       </div>
 
-      {selectedStoryUrl && (
+      {!isFirefox && selectedStoryUrl && (
         <StoryIframeModal 
           url={selectedStoryUrl} 
           onClose={() => setSelectedStoryUrl(null)} 

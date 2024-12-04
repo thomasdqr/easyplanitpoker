@@ -16,7 +16,7 @@ import Button from '../components/common/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function extractJiraLinks(input: string): string[] {
-  const jiraLinkRegex = /https?:\/\/[^\/]+\/browse\/[A-Z]+-\d+/g;
+  const jiraLinkRegex = /https?:\/\/[^\/\s]+\.atlassian\.net[^\s]*/g;
   const matches = input.match(jiraLinkRegex);
   return matches ? Array.from(new Set(matches)) : [];
 }
@@ -236,7 +236,6 @@ export default function SessionPage() {
     setIsSubmitting(true);
     try {
       const jiraLinks = extractJiraLinks(newStoryTitle);
-      console.log('Extracted JIRA links:', jiraLinks);
       
       const sessionRef = doc(db, 'sessions', sessionId);
       
@@ -258,20 +257,13 @@ export default function SessionPage() {
           votes: {},
           status: 'pending' as const
         }));
-        
-        console.log('New stories to be added:', newStories);
-
         // Update with all new stories at once
         const updatedStories = [...currentStories, ...newStories];
-        console.log('Final stories array:', updatedStories);
         
         await updateDoc(sessionRef, {
           stories: updatedStories
         });
-        
-        console.log('Update completed successfully');
       } else {
-        console.log('No JIRA links found, creating single story');
         const storyData = {
           id: crypto.randomUUID(),
           title: newStoryTitle,

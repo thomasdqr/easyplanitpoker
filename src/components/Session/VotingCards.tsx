@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
+import { VOTING_VALUES } from '../../constants/voting';
 import './VotingCards.css';
-
-const VOTING_VALUES = [1, 2, 3, 5, 8, 13, 21, '?'];
 
 interface Props {
   onVote: (value: number | string) => void;

@@ -14,11 +14,16 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '../components/common/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { FIBONACCI_NUMBERS } from '../constants/voting';
 
 function extractJiraLinks(input: string): string[] {
   const jiraLinkRegex = /https?:\/\/[^\/\s]+\.atlassian\.net[^\s]*/g;
   const matches = input.match(jiraLinkRegex);
   return matches ? Array.from(new Set(matches)) : [];
+}
+
+function roundToHigherFibonacci(num: number): number {
+  return FIBONACCI_NUMBERS.find((fib: number) => fib >= num) || FIBONACCI_NUMBERS[FIBONACCI_NUMBERS.length - 1];
 }
 
 export default function SessionPage() {
@@ -131,9 +136,12 @@ export default function SessionPage() {
         .map(p => p.currentVote)
         .filter((vote): vote is number => vote !== null && vote >= 0);
       
-      const averagePoints = votes.length > 0 
-        ? Math.round(votes.reduce((a, b) => a + b, 0) / votes.length) 
+      const rawAverage = votes.length > 0 
+        ? votes.reduce((a, b) => a + b, 0) / votes.length
         : 0;
+      
+      // Round to higher Fibonacci number
+      const averagePoints = roundToHigherFibonacci(rawAverage);
 
       // Update story with votes and average
       const updatedStories = session.stories.map(s => 

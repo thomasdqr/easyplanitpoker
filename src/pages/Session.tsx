@@ -17,7 +17,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FIBONACCI_NUMBERS } from '../constants/voting';
 
 function extractJiraLinks(input: string): string[] {
-  const jiraLinkRegex = /https?:\/\/[^\/\s]+\.atlassian\.net[^\s]*/g;
+  const jiraLinkRegex = /https?:\/\/[^/\s]+\.atlassian\.net[^\s]*/g;
   const matches = input.match(jiraLinkRegex);
   return matches ? Array.from(new Set(matches)) : [];
 }

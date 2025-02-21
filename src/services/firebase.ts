@@ -36,7 +36,7 @@ async function cleanupOldSessions() {
     const totalSessionsQuery = query(sessionsRef);
     const totalSessionsSnap = await getDocs(totalSessionsQuery);
     
-    let sessionsToDelete = new Set(oldSessionsSnap.docs.map(doc => doc.id));
+    const sessionsToDelete = new Set(oldSessionsSnap.docs.map(doc => doc.id));
 
     // Only check for MAX_SESSIONS limit if we have more than MAX_SESSIONS
     if (totalSessionsSnap.size > MAX_SESSIONS) {
@@ -53,10 +53,12 @@ async function cleanupOldSessions() {
     }
 
     if (sessionsToDelete.size > 0) {
-      // Delete all identified sessions
-      const deletePromises = Array.from(sessionsToDelete).map(sessionId =>
-        deleteDoc(doc(db, 'sessions', sessionId))
-      );
+      // Delete all identified sessions and clean up localStorage
+      const deletePromises = Array.from(sessionsToDelete).map(sessionId => {
+        // Clean up localStorage PM ID
+        localStorage.removeItem(`pm_${sessionId}`);
+        return deleteDoc(doc(db, 'sessions', sessionId));
+      });
       
       await Promise.all(deletePromises);
       console.log(`Cleaned up ${sessionsToDelete.size} old sessions`);
@@ -72,6 +74,9 @@ export async function createSession(pmName: string): Promise<{ sessionId: string
 
   const sessionId = uuidv4();
   const pmId = uuidv4();
+
+  // Store PM ID in localStorage with session ID
+  localStorage.setItem(`pm_${sessionId}`, pmId);
 
   const pmParticipant: Participant = {
     id: pmId,

@@ -23,5 +23,6 @@ export interface Session {
   participants: Participant[];
   currentStoryId: string | null;
   isVotingRevealed: boolean;
+  wizzTarget?: string | null;
   createdAt?: number;
 } 

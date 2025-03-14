@@ -64,3 +64,22 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Wizz Animation Effect */
+@keyframes global-wizz-animation {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-8px, -8px); }
+  20% { transform: translate(8px, 8px); }
+  30% { transform: translate(-8px, 8px); }
+  40% { transform: translate(8px, -8px); }
+  50% { transform: translate(-8px, 0); }
+  60% { transform: translate(8px, 0); }
+  70% { transform: translate(-5px, 0); }
+  80% { transform: translate(5px, 0); }
+  90% { transform: translate(-2px, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+body.wizz-effect {
+  animation: global-wizz-animation 0.8s ease-in-out;
+}

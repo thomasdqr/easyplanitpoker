@@ -86,7 +86,13 @@
   gap: var(--spacing-md);
 }
 
-.kick-button {
+.participant-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.kick-button, .wizz-button {
   background: none;
   border: none;
   padding: 4px;
@@ -106,8 +112,34 @@
   background: rgba(239, 68, 68, 0.1);
 }
 
-.participant-card:hover .kick-button {
+.wizz-button:hover {
+  opacity: 1;
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.participant-card:hover .kick-button,
+.participant-card:hover .wizz-button {
   opacity: 0.7;
+}
+
+/* Animation class for the wizz effect */
+@keyframes wizz-animation {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-5px, -5px); }
+  20% { transform: translate(5px, 5px); }
+  30% { transform: translate(-5px, 5px); }
+  40% { transform: translate(5px, -5px); }
+  50% { transform: translate(-5px, 0); }
+  60% { transform: translate(5px, 0); }
+  70% { transform: translate(-3px, 0); }
+  80% { transform: translate(3px, 0); }
+  90% { transform: translate(-1px, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+.wizz-effect {
+  animation: wizz-animation 0.8s ease-in-out;
 }
 
 .you-badge {
@@ -142,4 +174,16 @@
 
 .dark-mode .kick-button:hover {
   background: rgba(239, 68, 68, 0.2);
+}
+
+.wizz-button.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  color: #9ca3af;
+}
+
+.wizz-button.disabled:hover {
+  background: none;
+  opacity: 0.5;
+  color: #9ca3af;
 } 

@@ -15,6 +15,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Button from '../components/common/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FIBONACCI_NUMBERS } from '../constants/voting';
+import useWizz from '../hooks/useWizz';
 
 function extractJiraLinks(input: string): string[] {
   const jiraLinkRegex = /https?:\/\/[^/\s]+\.atlassian\.net[^\s]*/g;
@@ -37,6 +38,7 @@ export default function SessionPage() {
   const [copied, setCopied] = useState(false);
   const [newStoryTitle, setNewStoryTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { sendWizz, isParticipantWizzDisabled, checkSpamForParticipant } = useWizz();
 
   const currentParticipant = session?.participants.find(p => p.id === participantId);
 
@@ -81,6 +83,25 @@ export default function SessionPage() {
       }
     }
   }, [session?.participants, participantId, loading, navigate]);
+
+  // Add this useEffect to listen for wizz events
+  useEffect(() => {
+    if (!session?.wizzTarget) return;
+    
+    // If this participant is the target of the wizz, trigger the wizz effect
+    if (session.wizzTarget === participantId) {
+      sendWizz(participantId);
+      
+      // Clear the wizz target after processing
+      if (sessionId) {
+        updateDoc(doc(db, 'sessions', sessionId), {
+          wizzTarget: null
+        }).catch(error => {
+          console.error('Error clearing wizz target:', error);
+        });
+      }
+    }
+  }, [session?.wizzTarget, participantId, sendWizz, sessionId]);
 
   const handleSelectStory = async (storyId: string) => {
     if (!sessionId || !currentParticipant?.isPM || !session) return;
@@ -321,6 +342,37 @@ export default function SessionPage() {
     }
   };
 
+  const handleSendWizz = async (targetParticipantId: string) => {
+    if (!sessionId || !currentParticipant?.isPM) return;
+
+    // Check if the wizz is disabled for this participant
+    if (isParticipantWizzDisabled(targetParticipantId)) {
+      console.log(`[PM] Wizz attempt BLOCKED for participant ${targetParticipantId} - button is disabled`);
+      return;
+    }
+
+    // Check for spam and potentially disable the button
+    const isNowDisabled = checkSpamForParticipant(targetParticipantId);
+    if (isNowDisabled) {
+      console.log(`[PM] Wizz attempt BLOCKED for participant ${targetParticipantId} - just disabled due to spam check`);
+      return;
+    }
+
+    console.log(`[PM] Sending wizz to participant ${targetParticipantId}`);
+
+    try {
+      // Update the session with the wizz target
+      await updateDoc(doc(db, 'sessions', sessionId), {
+        wizzTarget: targetParticipantId
+      });
+
+      // Also trigger the local wizz effect for the PM to provide feedback
+      sendWizz(targetParticipantId);
+    } catch (error) {
+      console.error('Error sending wizz:', error);
+    }
+  };
+
   if (error) {
     return (
       <div className="error-container">
@@ -398,7 +450,9 @@ export default function SessionPage() {
                 isVotingRevealed={session!.isVotingRevealed}
                 isPM={currentParticipant?.isPM}
                 onKickParticipant={handleKickParticipant}
+                onSendWizz={handleSendWizz}
                 currentParticipantId={participantId}
+                isParticipantWizzDisabled={isParticipantWizzDisabled}
               />
               {currentParticipant?.isPM && (
                 <Button 

@@ -12,6 +12,14 @@ interface Props {
   showNotification?: (message: string) => void;
 }
 
+// Function to get the corresponding letter for a number (1-based index in alphabet)
+const getLetterForNumber = (value: number | string): string => {
+  if (value === '?') return ''; // No special character for '?' card
+  const num = Number(value);
+  if (num < 1 || num > 26) return '';
+  return String.fromCharCode(64 + num); // A is 65 in ASCII
+};
+
 // Word-based sequences where numbers represent letter positions in the alphabet
 const WORD_SEQUENCES = {
   CUBE: [3, 21, 2, 5],
@@ -46,13 +54,14 @@ export default function VotingCards({ onVote, selectedValue, disabled, onSecretW
   const [secretSequence, setSecretSequence] = useState<(number | string)[]>([]);
   const [lastInputTime, setLastInputTime] = useState<number>(0);
   const [currentSecretWord, setCurrentSecretWord] = useState<keyof typeof WORD_SEQUENCES>('CUBE');
+  const [hintShown, setHintShown] = useState(false);
 
   // Set a random word sequence on component mount
   useEffect(() => {
     const words = Object.keys(WORD_SEQUENCES) as Array<keyof typeof WORD_SEQUENCES>;
     const randomWord = words[Math.floor(Math.random() * words.length)];
     setCurrentSecretWord(randomWord);
-    console.log('🎮 Secret word set to:', randomWord);
+    // console.log('🎮 Secret word set to:', randomWord);
   }, []);
 
   const isSelected = (value: number | string) => {
@@ -93,6 +102,7 @@ export default function VotingCards({ onVote, selectedValue, disabled, onSecretW
     // Show hint when clicking '?' with matching colors instead of unlocking
     if (value === '?' && questionMarkColor && showNotification) {
       showNotification(WORD_HINTS[currentSecretWord]);
+      setHintShown(true);
     }
 
     // Secret sequence handling
@@ -121,9 +131,19 @@ export default function VotingCards({ onVote, selectedValue, disabled, onSecretW
           initial={{ scale: 1 }}
           animate={{ scale: 1 }}
         >
-          <span style={value === '?' && questionMarkColor ? { color: questionMarkColor } : undefined}>
-            {value}
-          </span>
+          <div className="card-content">
+            <span 
+              className="card-value"
+              style={value === '?' && questionMarkColor ? { color: questionMarkColor } : undefined}
+            >
+              {value}
+            </span>
+            {hintShown && (
+              <span className="card-letter">
+                {getLetterForNumber(value)}
+              </span>
+            )}
+          </div>
         </motion.div>
       ))}
     </div>

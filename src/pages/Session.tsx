@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { doc, onSnapshot, updateDoc, getDoc, arrayUnion } from 'firebase/firestore';
@@ -16,6 +16,18 @@ import Button from '../components/common/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FIBONACCI_NUMBERS } from '../constants/voting';
 import useWizz from '../hooks/useWizz';
+
+// Secret colors for the title
+const SECRET_COLORS = [
+  '#FF1E1E',  // Bright Red
+  '#00FFAA',  // Neon Green
+  '#1E90FF',  // Dodger Blue
+  '#FFD700',  // Gold
+  '#FF00FF',  // Magenta
+  '#8A2BE2',  // Violet
+  '#FF8C00',  // Dark Orange
+  '#00FF00'   // Lime Green
+];
 
 function extractJiraLinks(input: string): string[] {
   const jiraLinkRegex = /https?:\/\/[^/\s]+\.atlassian\.net[^\s]*/g;
@@ -39,8 +51,65 @@ export default function SessionPage() {
   const [newStoryTitle, setNewStoryTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { sendWizz, isParticipantWizzDisabled, checkSpamForParticipant } = useWizz();
+  const [secretWizzEnabled, setSecretWizzEnabled] = useState<boolean>(false);
+  const [titleColorIndex, setTitleColorIndex] = useState<number>(0);
+  const [titleClickable, setTitleClickable] = useState<boolean>(false);
+  const [questionMarkColor, setQuestionMarkColor] = useState<string>('');
 
   const currentParticipant = session?.participants.find(p => p.id === participantId);
+
+  // Function to show notification
+  const showNotification = useCallback((message: string) => {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    `;
+    notification.innerHTML = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.style.opacity = '1', 100);
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => document.body.removeChild(notification), 300);
+    }, 3000);
+  }, []);
+
+  // Handle title click in dark mode
+  const handleTitleClick = useCallback(() => {
+    const isDarkMode = document.documentElement.classList.contains('dark-mode');
+    // Disable for PMs
+    if (!isDarkMode || !titleClickable || currentParticipant?.isPM) return;
+
+    setTitleColorIndex((prevIndex) => (prevIndex + 1) % SECRET_COLORS.length);
+  }, [titleClickable, currentParticipant?.isPM]);
+
+  // Enable title clicking when all words are clicked
+  const handleWordClick = useCallback(() => {
+    const isDarkMode = document.documentElement.classList.contains('dark-mode');
+    // Disable for PMs
+    if (!isDarkMode || currentParticipant?.isPM) return;
+
+    // Set a random color for the question mark
+    if (!questionMarkColor) {
+      const randomColor = SECRET_COLORS[Math.floor(Math.random() * SECRET_COLORS.length)];
+      setQuestionMarkColor(randomColor);
+    }
+
+    setTitleClickable(true);
+  }, [questionMarkColor, currentParticipant?.isPM]);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -373,6 +442,88 @@ export default function SessionPage() {
     }
   };
 
+  const handleSecretWizz = useCallback((word: string) => {
+    if (!currentParticipant || currentParticipant.isPM) return;
+    
+    // Check if the title color matches the question mark color
+    const titleColor = SECRET_COLORS[titleColorIndex];
+    if (titleColor === questionMarkColor && questionMarkColor) {
+      setSecretWizzEnabled(true);
+      showNotification(`🎮 Secret wizz mode unlocked! The secret word is ${word}`);
+      
+      // Reset colors after successful unlock
+      setQuestionMarkColor('');
+      setTitleColorIndex(0);
+      setTitleClickable(false);
+    } else {
+      showNotification('🎮 Something is not matching...');
+    }
+  }, [currentParticipant, titleColorIndex, questionMarkColor, showNotification]);
+
+  const handleSecretWizzClick = async (targetParticipantId: string) => {
+    if (!sessionId || !secretWizzEnabled || !currentParticipant || currentParticipant.isPM) return;
+    
+    // Don't allow wizzing yourself
+    if (targetParticipantId === currentParticipant.id) return;
+
+    // Check if the wizz is disabled for this participant
+    if (isParticipantWizzDisabled(targetParticipantId)) {
+      console.log(`[Secret] Wizz attempt BLOCKED for participant ${targetParticipantId} - button is disabled`);
+      return;
+    }
+
+    // Check for spam and potentially disable the button
+    const isNowDisabled = checkSpamForParticipant(targetParticipantId);
+    if (isNowDisabled) {
+      console.log(`[Secret] Wizz attempt BLOCKED for participant ${targetParticipantId} - just disabled due to spam check`);
+      return;
+    }
+
+    try {
+      console.log(`[Secret] Sending wizz to participant ${targetParticipantId}`);
+      
+      // Update the session with the wizz target
+      await updateDoc(doc(db, 'sessions', sessionId), {
+        wizzTarget: targetParticipantId
+      });
+
+      // Also trigger the local wizz effect for feedback
+      sendWizz(targetParticipantId);
+
+      // Disable secret wizz after use
+      setSecretWizzEnabled(false);
+
+      // Show feedback notification
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+      `;
+      notification.innerHTML = '🎮 Secret wizz used! Enter the sequence again to unlock';
+      document.body.appendChild(notification);
+      setTimeout(() => notification.style.opacity = '1', 100);
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(notification), 300);
+      }, 3000);
+    } catch (error) {
+      console.error('Error sending secret wizz:', error);
+    }
+  };
+
   if (error) {
     return (
       <div className="error-container">
@@ -410,7 +561,7 @@ export default function SessionPage() {
       className="session-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0 }}
     >
       <div className="session-wrapper">
         <header className="session-header">
@@ -423,7 +574,22 @@ export default function SessionPage() {
             >
               Back
             </Button>
-            <h1>Simple Poker Planning</h1>
+            <h1 
+              style={{ 
+                color: titleClickable ? SECRET_COLORS[titleColorIndex] : undefined,
+                cursor: titleClickable ? 'pointer' : 'default',
+                userSelect: 'none',
+                pointerEvents: currentParticipant?.isPM ? 'none' : 'auto'
+              }}
+              onClick={handleTitleClick}
+            >
+              <span 
+                className="title-word" 
+                onClick={handleWordClick}
+              >
+                Simple Poker Planning
+              </span>
+            </h1>
           </div>
           <div className="copy-link-container">
             <h2 className="invite-label">Invite participants</h2>
@@ -450,7 +616,7 @@ export default function SessionPage() {
                 isVotingRevealed={session!.isVotingRevealed}
                 isPM={currentParticipant?.isPM}
                 onKickParticipant={handleKickParticipant}
-                onSendWizz={handleSendWizz}
+                onSendWizz={currentParticipant?.isPM ? handleSendWizz : (secretWizzEnabled ? handleSecretWizzClick : undefined)}
                 currentParticipantId={participantId}
                 isParticipantWizzDisabled={isParticipantWizzDisabled}
               />
@@ -520,6 +686,9 @@ export default function SessionPage() {
                 onVote={handleVote}
                 selectedValue={currentParticipant?.currentVote || undefined}
                 disabled={!session!.currentStoryId || session!.isVotingRevealed}
+                onSecretWizz={handleSecretWizz}
+                questionMarkColor={questionMarkColor}
+                showNotification={showNotification}
               />
             </section>
           </div>

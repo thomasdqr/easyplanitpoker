@@ -26,21 +26,35 @@ export default function ParticipantList({
 }: Props) {
   // Debug log to check if the component is receiving updates about disabled participants
   useEffect(() => {
-    if (isPM) {
+    if (isPM || onSendWizz) {
       participants.forEach(participant => {
-        if (!participant.isPM && participant.id !== currentParticipantId && participant.currentVote === null) {
+        if (participant.id !== currentParticipantId && participant.currentVote === null) {
           const isDisabled = isParticipantWizzDisabled(participant.id);
-          console.log(`[PM-UI] Participant ${participant.id} (${participant.name}) wizz button disabled: ${isDisabled}`);
+          console.log(`[UI] Participant ${participant.id} (${participant.name}) wizz button disabled: ${isDisabled}`);
         }
       });
     }
-  }, [participants, isPM, currentParticipantId, isParticipantWizzDisabled]);
+  }, [participants, isPM, currentParticipantId, isParticipantWizzDisabled, onSendWizz]);
+
+  const canShowActionsForParticipant = (participant: Participant) => {
+    // Don't show actions for yourself
+    if (participant.id === currentParticipantId) return false;
+
+    // If you're the PM, show actions for non-PM participants
+    if (isPM) return !participant.isPM;
+
+    // In secret mode (when onSendWizz is available), show actions for everyone except yourself
+    if (onSendWizz) return true;
+
+    return false;
+  };
 
   return (
     <div className="participant-list">
       <AnimatePresence>
         {participants.map((participant) => {
           const isDisabled = isParticipantWizzDisabled(participant.id);
+          const showActions = canShowActionsForParticipant(participant);
           
           return (
             <motion.div
@@ -58,23 +72,27 @@ export default function ParticipantList({
                     <span className="you-badge">YOU</span>
                   )}
                 </span>
-                {isPM && !participant.isPM && participant.id !== currentParticipantId && (
+                {showActions && (
                   <div className="participant-action-buttons">
-                    <button 
-                      className="kick-button"
-                      onClick={() => onKickParticipant?.(participant.id)}
-                      title="Kick participant"
-                    >
-                      <PersonRemoveIcon fontSize="small" />
-                    </button>
+                    {/* Only show kick button for PM and only for non-PM participants */}
+                    {isPM && !participant.isPM && (
+                      <button 
+                        className="kick-button"
+                        onClick={() => onKickParticipant?.(participant.id)}
+                        title="Kick participant"
+                      >
+                        <PersonRemoveIcon fontSize="small" />
+                      </button>
+                    )}
                     
-                    {participant.currentVote === null && (
+                    {/* Show wizz button if participant hasn't voted and we have a wizz handler */}
+                    {participant.currentVote === null && onSendWizz && (
                       <button 
                         className={`wizz-button ${isDisabled ? 'disabled' : ''}`}
                         onClick={() => {
-                          console.log(`[PM-UI] Clicked wizz button for ${participant.id} (${participant.name}), disabled: ${isDisabled}`);
+                          console.log(`[UI] Clicked wizz button for ${participant.id} (${participant.name}), disabled: ${isDisabled}`);
                           if (!isDisabled) {
-                            onSendWizz?.(participant.id);
+                            onSendWizz(participant.id);
                           }
                         }}
                         title={isDisabled 

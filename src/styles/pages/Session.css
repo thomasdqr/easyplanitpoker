@@ -86,7 +86,7 @@
   flex-direction: column;
   gap: var(--spacing-lg);
   border: 1px solid var(--border-color);
-  overflow: hidden;
+  overflow: auto;
   max-height: 100%;
 }
 

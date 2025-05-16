@@ -24,6 +24,7 @@ export default function UserStoryList({
 }: Props) {
   const [selectedStoryUrl, setSelectedStoryUrl] = useState<string | null>(null);
   const [isFirefox, setIsFirefox] = useState(false);
+  const isIframeBlocked = true;
 
   useEffect(() => {
     // Detect Firefox browser
@@ -42,7 +43,7 @@ export default function UserStoryList({
   };
 
   const handleStoryLinkClick = (url: string) => {
-    if (isFirefox) {
+    if (isFirefox || isIframeBlocked) {
       // Open in new tab for Firefox
       window.open(url, '_blank');
     } else {
@@ -105,7 +106,7 @@ export default function UserStoryList({
         </AnimatePresence>
       </div>
 
-      {!isFirefox && selectedStoryUrl && (
+      {!isFirefox && selectedStoryUrl && !isIframeBlocked && (
         <StoryIframeModal 
           url={selectedStoryUrl} 
           onClose={() => setSelectedStoryUrl(null)} 

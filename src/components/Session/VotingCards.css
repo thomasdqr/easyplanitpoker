@@ -2,11 +2,21 @@
   display: flex;
   gap: var(--spacing-md);
   justify-content: space-between;
+  flex-wrap: nowrap; /* Prevent wrapping to force shrinking */
+  width: 100%;
+  max-width: 100%; /* Prevent overflow */
+  overflow: visible; /* Allow cards to scale outside container */
+  box-sizing: border-box; /* Include padding in width calculation */
+  container-type: inline-size; /* Enable container queries if supported */
+  padding: 4px; /* Add padding to prevent scaled cards from being cut off */
 }
 
 .card {
-  width: 90px;
-  height: 130px;
+  flex: 1 1 0; /* Allow cards to shrink to 0 and grow equally */
+  min-width: 30px; /* Sensible minimum width */
+  max-width: clamp(50px, 7vw, 100px); /* Fluid max-width based on viewport */
+  height: auto; /* Let aspect ratio control height */
+  aspect-ratio: 9 / 13;
   background: var(--card-background);
   color: var(--text-color);
   border-radius: var(--border-radius-md);
@@ -18,28 +28,32 @@
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
   overflow: hidden;
+  box-sizing: border-box; /* Include border in size calculation */
 }
 
 .card-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: clamp(2px, 1.5cqi, 8px); /* Responsive gap based on container inline-size */
   position: relative;
   z-index: 1;
+  padding: clamp(2px, 1cqi, 4px); /* Small padding for very small cards */
 }
 
 .card-value {
-  font-size: 1.75rem;
+  font-size: clamp(0.75rem, 18cqi, 1.75rem); /* Responsive font size based on container */
   font-weight: bold;
   transition: color 0.3s ease;
+  line-height: 1;
 }
 
 .card-letter {
-  font-size: 1rem;
+  font-size: clamp(0.5rem, 12cqi, 1rem); /* Responsive font size based on container */
   opacity: 0.2;
   font-weight: 500;
   transition: color 0.3s ease, opacity 0.3s ease;
+  line-height: 1;
 }
 
 .card::before {
@@ -109,4 +123,69 @@
 
 .dark-mode .card-letter {
   opacity: 0;
-} 
+}
+
+/* Responsive voting cards */
+@media (max-width: 768px) {
+  .voting-cards {
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .voting-cards {
+    gap: var(--spacing-xs);
+  }
+}
+
+@media (max-width: 360px) {
+  .voting-cards {
+    gap: 2px; /* Minimal gap on very small screens */
+  }
+}
+
+/* For extremely small screens or when cards would overflow */
+@media (max-width: 320px) {
+  .voting-cards {
+    gap: 1px;
+  }
+
+  .card-letter {
+    display: none; /* Hide letters on extremely small screens */
+  }
+}
+
+/* Emergency breakpoint for very constrained layouts */
+@media (max-width: 280px) {
+  .session-content {
+    grid-template-columns: 1fr; /* Force single column */
+    grid-template-areas:
+      "stories"
+      "voting"
+      "participants";
+  }
+}
+
+/* Additional flexibility for very constrained spaces */
+@media (max-width: 280px) {
+  .voting-cards {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1px;
+  }
+  
+  .card {
+    min-width: 25px;
+    max-width: 30px;
+    height: clamp(35px, 6vw, 50px);
+    margin: 1px; /* Small margin when wrapped */
+  }
+  
+  .card-value {
+    font-size: clamp(0.6rem, 2.5vw, 0.8rem);
+  }
+  
+  .card-letter {
+    display: none; /* Hide letters on extremely small screens */
+  }
+}

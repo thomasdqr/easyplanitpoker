@@ -31,14 +31,76 @@
   align-items: center;
   gap: var(--spacing-sm);
   flex: 1;
+  min-width: 0;
 }
 
 .participant-name {
-  font-weight: 500;
-  color: var(--text-color);
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.participant-name-text {
+  font-weight: 500;
+  color: var(--text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  cursor: default;
+}
+
+.participant-name-text:hover {
+  text-overflow: unset;
+  color: transparent;
+}
+
+.participant-name-text:hover::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: max-content;
+  animation: scroll-text 2s linear infinite alternate;
+  background: transparent;
+  color: var(--text-color);
+  z-index: 1;
+  max-width: 100%;
+}
+
+.participant-name-text.infinite-scroll:hover::after {
+  content: attr(data-repeated-text);
+  animation: infinite-scroll-text 10s linear 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes scroll-text {
+  0%, 5% {
+    transform: translateX(0);
+  }
+  80%, 100% {
+    transform: translateX(var(--scroll-distance, -50%));
+  }
+}
+
+@keyframes infinite-scroll-text {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-500%);
+  }
+}
+
+.participant-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-shrink: 0;
 }
 
 .pm-badge {
@@ -90,6 +152,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  flex-shrink: 0;
 }
 
 .kick-button, .wizz-button {
@@ -186,4 +249,8 @@
   background: none;
   opacity: 0.5;
   color: #9ca3af;
+}
+
+.dark-mode .participant-name-text:hover::after {
+  color: var(--dark-text-color);
 } 

@@ -49,6 +49,46 @@ export default function ParticipantList({
     return false;
   };
 
+  const handleNameHover = (element: HTMLElement) => {
+    const text = element.getAttribute('data-text') || element.textContent || '';
+    const containerWidth = element.offsetWidth;
+    
+    // Use canvas to measure actual text width with exact font
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    
+    const computedStyle = window.getComputedStyle(element);
+    context.font = `${computedStyle.fontWeight} ${computedStyle.fontSize} ${computedStyle.fontFamily}`;
+    
+    const actualTextWidth = context.measureText(text).width;
+    
+    if (actualTextWidth > containerWidth) {
+      // Create infinite scrolling effect with repeated text
+      const separator = ' • '; // Visual separator between repetitions
+      const textWithSeparator = text + separator;
+      const repeatedText = textWithSeparator.repeat(20); // Repeat enough times for smooth loop
+      
+      element.setAttribute('data-repeated-text', repeatedText);
+      element.classList.add('infinite-scroll');
+      
+      // Stop animation after 10 seconds and show original text
+      setTimeout(() => {
+        element.classList.remove('infinite-scroll');
+        element.removeAttribute('data-repeated-text');
+        // Force show original static text
+        element.style.setProperty('--scroll-distance', '0%');
+      }, 10000);
+    } else {
+      element.style.setProperty('--scroll-distance', '0%');
+    }
+  };
+
+  const handleNameLeave = (element: HTMLElement) => {
+    element.classList.remove('infinite-scroll');
+    element.removeAttribute('data-repeated-text');
+  };
+
   return (
     <div className="participant-list">
       <AnimatePresence>
@@ -65,13 +105,22 @@ export default function ParticipantList({
               exit={{ opacity: 0, x: -20 }}
             >
               <div className="participant-info">
-                <span className="participant-name">
-                  {participant.name}
-                  {participant.isPM && <span className="pm-badge">PM</span>}
-                  {participant.id === currentParticipantId && (
-                    <span className="you-badge">YOU</span>
-                  )}
-                </span>
+                <div className="participant-name">
+                  <span 
+                    className="participant-name-text" 
+                    data-text={participant.name}
+                    onMouseEnter={(e) => handleNameHover(e.currentTarget)}
+                    onMouseLeave={(e) => handleNameLeave(e.currentTarget)}
+                  >
+                    {participant.name}
+                  </span>
+                  <div className="participant-badges">
+                    {participant.isPM && <span className="pm-badge">PM</span>}
+                    {participant.id === currentParticipantId && (
+                      <span className="you-badge">YOU</span>
+                    )}
+                  </div>
+                </div>
                 {showActions && (
                   <div className="participant-action-buttons">
                     {/* Only show kick button for PM and only for non-PM participants */}

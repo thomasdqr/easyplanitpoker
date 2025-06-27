@@ -17,6 +17,9 @@
   padding: 0 var(--spacing-xl);
   display: flex;
   flex-direction: column;
+  overflow-x: hidden; /* Prevent horizontal overflow only */
+  overflow-y: auto; /* Allow vertical overflow for scaled cards */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .session-header {
@@ -67,38 +70,53 @@
 }
 
 .session-content {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 300px); /* Ensure participant panel doesn't exceed 300px but stays at least 250px */
+  grid-template-rows: 1fr auto;
   gap: var(--spacing-xl);
   flex: 1;
   position: relative;
   z-index: 2;
   min-height: 0;
-  flex-direction: row-reverse;
+  max-width: 100vw; /* Force constraint to viewport width */
+  width: 100%;
+  grid-template-areas:
+    "stories participants"
+    "voting participants";
 }
 
-.right-panel {
-  width: 300px;
+/* Shared card styles for uniform design */
+.card-base {
   background: white;
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
   border: 1px solid var(--border-color);
-  overflow: auto;
-  max-height: 100%;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: var(--spacing-xl);
 }
 
-.left-panel {
-  flex: 1;
+.participants-card {
+  grid-area: participants;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  background: transparent;
-  padding: 0;
-  box-shadow: none;
+  overflow: auto;
+  max-height: 100%;
+  min-width: 0; /* Allow shrinking */
+}
+
+.stories-card {
+  grid-area: stories;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
+  min-width: 0; /* Allow shrinking */
+  overflow: hidden;
+}
+
+.voting-card {
+  grid-area: voting;
+  min-width: 0; /* Allow shrinking */
+  overflow: visible; /* Allow voting cards to scale on hover */
 }
 
 .copy-link-container {
@@ -168,16 +186,7 @@
 }
 
 .stories-section {
-  flex: 1;
-  min-height: 0;
-  background: white;
-  border-radius: var(--border-radius-lg);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  padding: var(--spacing-xl);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  /* Inherits styles from .stories-card and .card-base */
 }
 
 .stories-header {
@@ -186,10 +195,20 @@
   align-items: center;
   margin-bottom: var(--spacing-lg);
   gap: var(--spacing-lg);
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .stories-header h2 {
   margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  white-space: nowrap; /* Prevent title wrapping */
+}
+
+/* Ensure section headers have consistent styling */
+.participants-section h2,
+.stories-section h2 {
+  margin: 0 0 var(--spacing-lg) 0;
   font-size: 1.5rem;
   color: var(--text-color);
 }
@@ -197,15 +216,16 @@
 .stories-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal overflow */
   min-height: 0;
+  min-width: 0; /* Allow shrinking */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .voting-section {
-  background: white;
-  border-radius: var(--border-radius-lg);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  padding: var(--spacing-xl);
+  /* Inherits styles from .voting-card and .card-base */
 }
 
 .reveal-votes-button {
@@ -436,10 +456,7 @@
   }
 }
 
-.participants-section h2 {
-  margin-top: 0;
-  margin-bottom: var(--spacing-lg);
-}
+/* Removed - now handled by unified section header styles */
 
 .invite-label {
   font-size: 1.5rem;
@@ -596,17 +613,7 @@
   background: #121821;
 }
 
-.dark-mode .right-panel {
-  background: var(--dark-card-background);
-  border-color: var(--dark-border-color);
-}
-
-.dark-mode .stories-section {
-  background: var(--dark-card-background);
-  border-color: var(--dark-border-color);
-}
-
-.dark-mode .voting-section {
+.dark-mode .card-base {
   background: var(--dark-card-background);
   border-color: var(--dark-border-color);
 }
@@ -728,6 +735,11 @@
   .invite-label {
     display: none !important; /* Force hide on mobile */
   }
+  
+  .session-content {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 260px); /* Narrower participant column with minimum */
+    gap: var(--spacing-lg); /* Smaller gap */
+  }
 }
 
 @media (max-width: 480px) {
@@ -737,6 +749,111 @@
   
   .session-header {
     gap: var(--spacing-md);
+  }
+  
+  .session-wrapper {
+    padding: 0 var(--spacing-lg); /* Reduce padding */
+  }
+  
+  .session-content {
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 220px); /* Ensure participant panel doesn't shrink below 180px */
+    gap: var(--spacing-md); /* Even smaller gap to save space */
+  }
+  
+  .card-base {
+    padding: var(--spacing-lg); /* Reduce padding */
+  }
+  
+  .add-story-form {
+    flex-direction: column; /* Stack form elements on very small screens */
+    gap: var(--spacing-sm);
+  }
+  
+  .add-story-form input {
+    font-size: 1rem; /* Slightly smaller text */
+  }
+  
+  .add-story-form button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    justify-content: center;
+  }
+}
+
+@media (max-width: 400px) {
+  .session-content {
+    grid-template-columns: minmax(0, 1fr) minmax(160px, 200px); /* Force very narrow participant panel */
+    gap: var(--spacing-sm); /* Minimal gap to save space */
+  }
+  
+  .card-base {
+    padding: var(--spacing-md); /* Reduce card padding */
+  }
+}
+
+@media (max-width: 360px) {
+  .session-wrapper {
+    padding: 0 var(--spacing-md); /* Reduce horizontal padding */
+  }
+  
+  .session-header {
+    flex-direction: column; /* Stack header elements */
+    align-items: stretch;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .header-left {
+    justify-content: flex-start;
+  }
+  
+  .header-left h1 {
+    font-size: 1.8rem; /* Smaller title on very small screens */
+  }
+  
+  .copy-link-container {
+    min-width: 0;
+    width: 100%;
+  }
+  
+  .session-content {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column layout */
+    grid-template-rows: auto auto auto; /* Three rows */
+    gap: var(--spacing-lg);
+    grid-template-areas:
+      "stories"
+      "voting"
+      "participants";
+  }
+  
+  .card-base {
+    padding: var(--spacing-lg); /* Reduce padding */
+  }
+  
+  .stories-card {
+    min-height: 300px; /* Ensure minimum height for stories */
+  }
+  
+  .stories-header {
+    flex-direction: column; /* Stack header elements on very small screens */
+    align-items: stretch;
+    gap: var(--spacing-md);
+  }
+  
+  .stories-header h2 {
+    text-align: center; /* Center title on mobile */
+    white-space: normal; /* Allow wrapping on very small screens */
+  }
+}
+
+/* Emergency breakpoint for very constrained layouts */
+@media (max-width: 280px) {
+  .session-content {
+    grid-template-columns: 1fr; /* Force single column */
+    grid-template-areas:
+      "stories"
+      "voting"
+      "participants";
   }
 }
 

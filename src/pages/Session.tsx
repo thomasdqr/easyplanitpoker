@@ -608,90 +608,86 @@ export default function SessionPage() {
         </header>
 
         <div className="session-content">
-          <div className="right-panel">
-            <section className="participants-section">
-              <h2>Participants</h2>
-              <ParticipantList
-                participants={session!.participants}
-                isVotingRevealed={session!.isVotingRevealed}
-                isPM={currentParticipant?.isPM}
-                onKickParticipant={handleKickParticipant}
-                onSendWizz={currentParticipant?.isPM ? handleSendWizz : (secretWizzEnabled ? handleSecretWizzClick : undefined)}
-                currentParticipantId={participantId}
-                isParticipantWizzDisabled={isParticipantWizzDisabled}
-              />
+          <section className="stories-section card-base stories-card">
+            <div className="stories-header">
+              <h2>User Stories</h2>
               {currentParticipant?.isPM && (
-                <Button 
-                  size="md"
-                  variant="primary"
-                  fullWidth
-                  icon={session!.isVotingRevealed ? <NavigateNextIcon /> : <VisibilityIcon />}
-                  onClick={session!.isVotingRevealed ? handleNextStory : handleRevealVotes}
-                  disabled={
-                    session!.isVotingRevealed 
-                      ? !session!.stories.find((_, i) => 
-                          i > session!.stories.findIndex(story => story.id === session!.currentStoryId)
-                        )
-                      : !canRevealVotes
-                  }
-                >
-                  {session!.isVotingRevealed ? 'NEXT STORY' : 'REVEAL VOTES'}
-                </Button>
+                <form onSubmit={handleAddStory} className="add-story-form">
+                  <input
+                    type="text"
+                    value={newStoryTitle}
+                    onChange={(e) => setNewStoryTitle(e.target.value)}
+                    placeholder="Add your story links or paste them from Notion here"
+                    disabled={isSubmitting}
+                  />
+                  <Button 
+                    type="submit"
+                    size="md"
+                    variant="primary"
+                    icon={isNotionContent(newStoryTitle) 
+                      ? <ContentCopyIcon fontSize="small" />
+                      : <AddIcon fontSize="small" />
+                    }
+                    disabled={!newStoryTitle.trim() || isSubmitting}
+                  >
+                    {getImportButtonText(newStoryTitle)}
+                  </Button>
+                </form>
               )}
-            </section>
-          </div>
-
-          <div className="left-panel">
-            <section className="stories-section">
-              <div className="stories-header">
-                <h2>User Stories</h2>
-                {currentParticipant?.isPM && (
-                  <form onSubmit={handleAddStory} className="add-story-form">
-                    <input
-                      type="text"
-                      value={newStoryTitle}
-                      onChange={(e) => setNewStoryTitle(e.target.value)}
-                      placeholder="Add your story links or paste them from Notion here"
-                      disabled={isSubmitting}
-                    />
-                    <Button 
-                      type="submit"
-                      size="md"
-                      variant="primary"
-                      icon={isNotionContent(newStoryTitle) 
-                        ? <ContentCopyIcon fontSize="small" />
-                        : <AddIcon fontSize="small" />
-                      }
-                      disabled={!newStoryTitle.trim() || isSubmitting}
-                    >
-                      {getImportButtonText(newStoryTitle)}
-                    </Button>
-                  </form>
-                )}
-              </div>
-              <div className="stories-content">
-                <UserStoryList
-                  stories={session!.stories}
-                  currentStoryId={session!.currentStoryId || undefined}
-                  isPM={currentParticipant?.isPM || false}
-                  sessionId={session!.id}
-                  onSelectStory={handleSelectStory}
-                  onDeleteStory={handleDeleteStory}
-                />
-              </div>
-            </section>
-
-            <section className="voting-section">
-              <VotingCards 
-                onVote={handleVote}
-                selectedValue={currentParticipant?.currentVote || undefined}
-                disabled={!session!.currentStoryId || session!.isVotingRevealed}
-                onSecretWizz={handleSecretWizz}
-                questionMarkColor={questionMarkColor}
-                showNotification={showNotification}
+            </div>
+            <div className="stories-content">
+              <UserStoryList
+                stories={session!.stories}
+                currentStoryId={session!.currentStoryId || undefined}
+                isPM={currentParticipant?.isPM || false}
+                sessionId={session!.id}
+                onSelectStory={handleSelectStory}
+                onDeleteStory={handleDeleteStory}
               />
-            </section>
-          </div>
+            </div>
+          </section>
+
+          <section className="voting-section card-base voting-card">
+            <VotingCards 
+              onVote={handleVote}
+              selectedValue={currentParticipant?.currentVote || undefined}
+              disabled={!session!.currentStoryId || session!.isVotingRevealed}
+              onSecretWizz={handleSecretWizz}
+              questionMarkColor={questionMarkColor}
+              showNotification={showNotification}
+            />
+          </section>
+
+          <section className="participants-section card-base participants-card">
+            <h2>Participants</h2>
+            <ParticipantList
+              participants={session!.participants}
+              isVotingRevealed={session!.isVotingRevealed}
+              isPM={currentParticipant?.isPM}
+              onKickParticipant={handleKickParticipant}
+              onSendWizz={currentParticipant?.isPM ? handleSendWizz : (secretWizzEnabled ? handleSecretWizzClick : undefined)}
+              currentParticipantId={participantId}
+              isParticipantWizzDisabled={isParticipantWizzDisabled}
+            />
+            {currentParticipant?.isPM && (
+              <Button 
+                size="md"
+                variant="primary"
+                fullWidth
+                icon={session!.isVotingRevealed ? <NavigateNextIcon /> : <VisibilityIcon />}
+                onClick={session!.isVotingRevealed ? handleNextStory : handleRevealVotes}
+                disabled={
+                  session!.isVotingRevealed 
+                    ? !session!.stories.find((_, i) => 
+                        i > session!.stories.findIndex(story => story.id === session!.currentStoryId)
+                      )
+                    : !canRevealVotes
+                }
+              >
+                {session!.isVotingRevealed ? 'NEXT STORY' : 'REVEAL VOTES'}
+              </Button>
+            )}
+          </section>
         </div>
       </div>
     </motion.div>

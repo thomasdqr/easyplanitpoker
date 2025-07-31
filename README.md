@@ -1,50 +1,154 @@
-# React + TypeScript + Vite
+# Easy Planning Poker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, real-time Planning Poker application built with React, TypeScript, and Firebase. Perfect for Agile teams to estimate user stories collaboratively.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Real-time Collaboration**: Live voting sessions with instant updates
+- **User Story Management**: Add, edit, and organize user stories with external links
+- **Flexible Voting**: Support for Fibonacci and T-shirt sizing scales
+- **Session Management**: Create sessions as a Product Manager or join existing ones
+- **Participant Management**: Track connected participants and their voting status
+- **Results Visualization**: Automatic calculation of average points and consensus
+- **Dark/Light Theme**: Toggle between themes for better user experience
+- **Sound Effects**: Audio feedback for interactive moments
+- **Firebase Integration**: Real-time database and hosting
 
-## Expanding the ESLint configuration
+## 🚀 Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Prerequisites
 
-- Configure the top-level `parserOptions` property like this:
+- Node.js (v18 or higher)
+- npm or yarn
+- Firebase account (for deployment)
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd easyplanitpoker
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up Firebase configuration:
+   - Create a Firebase project
+   - Add your Firebase config to `src/services/firebase.ts`
+   - Set up Firestore database rules
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:5173](http://localhost:5173) in your browser
+
+## 🛠️ Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run deploy` - Build and deploy to Firebase
+
+## 🏗️ Tech Stack
+
+- **Frontend**: React 18, TypeScript, Vite
+- **UI Library**: Material-UI (MUI)
+- **Styling**: CSS Modules, Emotion
+- **Animation**: Framer Motion
+- **Routing**: React Router v7
+- **Database**: Firebase Firestore
+- **Hosting**: Firebase Hosting
+- **Peer-to-Peer**: PeerJS (for real-time features)
+
+## 📁 Project Structure
+
+```
+src/
+├── components/
+│   ├── Session/          # Session-related components
+│   │   ├── ParticipantList.tsx
+│   │   ├── UserStoryList.tsx
+│   │   ├── VotingCards.tsx
+│   │   └── StoryIframeModal.tsx
+│   └── common/           # Reusable components
+│       ├── Button.tsx
+│       ├── Hero.tsx
+│       └── ThemeToggle.tsx
+├── pages/                # Main application pages
+│   ├── Home.tsx
+│   ├── Session.tsx
+│   └── JoinSession.tsx
+├── hooks/                # Custom React hooks
+│   ├── useSession.ts
+│   └── useWizz.ts
+├── services/             # External service integrations
+│   └── firebase.ts
+├── types/                # TypeScript type definitions
+│   └── index.ts
+├── constants/            # Application constants
+│   └── voting.ts
+└── styles/              # CSS and styling files
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 🎮 How to Use
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### As a Product Manager:
+1. Create a new session from the home page
+2. Add user stories with titles and optional external links
+3. Start voting on stories and reveal results when ready
+4. Track participant votes and manage the session
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+### As a Team Member:
+1. Join a session using the session ID
+2. Enter your name to participate
+3. Vote on active user stories using the card interface
+4. View results when the PM reveals votes
+
+## 🔧 Configuration
+
+### Firebase Setup
+Update `src/services/firebase.ts` with your Firebase configuration:
+
+```typescript
+const firebaseConfig = {
+  apiKey: "your-api-key",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  // ... other config
+};
 ```
+
+### Voting Scales
+Modify voting options in `src/constants/voting.ts`:
+
+```typescript
+export const VOTING_OPTIONS = [0, 1, 2, 3, 5, 8, 13, 21];
+```
+
+## 🚀 Deployment
+
+Deploy to Firebase:
+
+```bash
+npm run deploy
+```
+
+This command builds the project and deploys to Firebase Hosting using the configuration in `firebase.json`.
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is private and not licensed for public use.

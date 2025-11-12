@@ -6,7 +6,7 @@ interface Props {
   onClick?: () => void;
   type?: 'button' | 'submit';
   size?: 'sm' | 'md' | 'lg';
-  variant?: 'primary' | 'secondary' | 'success';
+  variant?: 'primary' | 'secondary' | 'success' | 'danger';
   disabled?: boolean;
   fullWidth?: boolean;
   icon?: ReactNode;

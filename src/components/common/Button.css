@@ -47,6 +47,11 @@
   color: white;
 }
 
+.custom-button.danger {
+  background: #ef4444;
+  color: white;
+}
+
 /* States */
 .custom-button:hover:not(:disabled) {
   transform: translateY(-1px);
@@ -100,3 +105,8 @@
   color: var(--dark-disabled-text);
   border-color: var(--dark-border-color);
 } 
+
+.dark-mode .custom-button.danger {
+  background: #dc2626;
+  color: white;
+}

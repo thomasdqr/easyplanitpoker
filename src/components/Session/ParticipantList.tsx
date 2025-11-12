@@ -3,7 +3,8 @@ import { Participant } from '../../types';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import './ParticipantList.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import ConfirmModal from '../common/ConfirmModal';
 
 interface Props {
   participants: Participant[];
@@ -24,6 +25,10 @@ export default function ParticipantList({
   currentParticipantId,
   isParticipantWizzDisabled = () => false
 }: Props) {
+  const [confirmKickParticipantId, setConfirmKickParticipantId] = useState<string | null>(null);
+  const participantToKick = confirmKickParticipantId
+    ? participants.find(p => p.id === confirmKickParticipantId)
+    : undefined;
   // Debug log to check if the component is receiving updates about disabled participants
   useEffect(() => {
     if (isPM || onSendWizz) {
@@ -127,7 +132,7 @@ export default function ParticipantList({
                     {isPM && !participant.isPM && (
                       <button 
                         className="kick-button"
-                        onClick={() => onKickParticipant?.(participant.id)}
+                        onClick={() => setConfirmKickParticipantId(participant.id)}
                         title="Kick participant"
                       >
                         <PersonRemoveIcon fontSize="small" />
@@ -172,6 +177,21 @@ export default function ParticipantList({
           );
         })}
       </AnimatePresence>
+      <ConfirmModal
+        open={!!confirmKickParticipantId}
+        title="Remove participant?"
+        description={confirmKickParticipantId ? `Are you sure you want to remove ${participantToKick?.name ?? 'this participant'} from the session?` : undefined}
+        confirmText="Remove"
+        cancelText="Cancel"
+        danger
+        onCancel={() => setConfirmKickParticipantId(null)}
+        onConfirm={() => {
+          if (confirmKickParticipantId) {
+            onKickParticipant?.(confirmKickParticipantId);
+          }
+          setConfirmKickParticipantId(null);
+        }}
+      />
     </div>
   );
 } 

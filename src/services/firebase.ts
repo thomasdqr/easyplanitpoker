@@ -3,13 +3,30 @@ import { getFirestore, doc, setDoc, collection, query, where, getDocs, orderBy, 
 import { Session, Participant } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
+const env = import.meta.env;
+const required = [
+  'VITE_FIREBASE_API_KEY',
+  'VITE_FIREBASE_AUTH_DOMAIN',
+  'VITE_FIREBASE_PROJECT_ID',
+  'VITE_FIREBASE_STORAGE_BUCKET',
+  'VITE_FIREBASE_MESSAGING_SENDER_ID',
+  'VITE_FIREBASE_APP_ID'
+] as const;
+const missing = required.filter((key) => !env[key]);
+if (missing.length > 0) {
+  throw new Error(
+    `Missing Firebase config at build time: ${missing.join(', ')}. ` +
+    'Set these in .env when building (e.g. for deploy use .env.production or CI env vars).'
+  );
+}
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: env.VITE_FIREBASE_API_KEY,
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
@@ -69,8 +86,10 @@ async function cleanupOldSessions() {
 }
 
 export async function createSession(pmName: string): Promise<{ sessionId: string; pmId: string }> {
-  // Clean up old sessions before creating a new one
-  await cleanupOldSessions();
+  // Clean up old sessions (non-blocking: don't fail session creation if cleanup errors)
+  cleanupOldSessions().catch((err) => {
+    console.warn('Session cleanup failed (session creation will continue):', err);
+  });
 
   const sessionId = uuidv4();
   const pmId = uuidv4();

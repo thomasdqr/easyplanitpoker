@@ -105,6 +105,21 @@
   gap: var(--spacing-lg);
 }
 
+.create-session-error {
+  padding: var(--spacing-md);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--border-radius-md);
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.dark-mode .create-session-error {
+  background: rgba(185, 28, 28, 0.15);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #fca5a5;
+}
+
 .content-wrapper input {
   padding: var(--spacing-md);
   background: #f9fafb;

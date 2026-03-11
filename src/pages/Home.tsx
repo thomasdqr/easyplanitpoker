@@ -7,6 +7,7 @@ import Hero from '../components/common/Hero';
 export default function Home() {
   const [pmName, setPmName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
   const navigate = useNavigate();
 
@@ -53,12 +54,16 @@ export default function Home() {
     e.preventDefault();
     if (!pmName.trim() || loading) return;
 
+    setError(null);
+    setLoading(true);
     try {
-      setLoading(true);
       const { sessionId, pmId } = await createSession(pmName.trim());
       navigate(`/session/${sessionId}`, { state: { participantId: pmId } });
-    } catch (error) {
-      console.error('Failed to create session:', error);
+    } catch (err) {
+      console.error('Failed to create session:', err);
+      const message = err instanceof Error ? err.message : 'Failed to create session. Check console and Firebase config.';
+      setError(message);
+    } finally {
       setLoading(false);
     }
   };
@@ -71,6 +76,11 @@ export default function Home() {
         <h1>Create New Session</h1>
         <p className="subtitle">As the Product Manager, enter your name to create a new planning poker session</p>
         <form onSubmit={handleCreateSession}>
+          {error && (
+            <div className="create-session-error" role="alert">
+              {error}
+            </div>
+          )}
           <input
             type="text"
             value={pmName}
